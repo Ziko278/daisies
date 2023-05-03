@@ -1,0 +1,45 @@
+{% extends 'admin_dashboard/layout.html' %}
+{% load static %}
+{% load humanize %}
+{% block 'main' %}
+<form action="" method="POST">
+    {% csrf_token %}
+<div class="col-12">
+    <div class="card recent-sales overflow-auto">
+
+        <div class="card-body">
+            <h5 class="card-title">Assign Permissions to {{ group.name|title }} Group</h5>
+            <table class="table table-borderless datatable">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Permissions</th>
+                    <th scope="col" class="text-center">Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% if permission_list %}
+                {% for permission in permission_list %}
+                <tr>
+                    <th scope="row"><a href="#">{{ forloop.counter }}</a></th>
+                    <td style="padding-left:20px">{{ permission.name|title }}</td>
+                    <td class="text-center"><input type="checkbox" name="permissions[]" {% if permission in group.permissions.all %} checked {% endif %} value="{{permission.id}}" /> </td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                    <tr><td colspan="10"><h3 class="text-center">No Permission to assign</h3></td></tr>
+                {% endif %}
+
+                </tbody>
+            </table>
+            <input type="hidden" name="name" value="{{group.name}}">
+            <button class="btn btn-primary">Proceed</button>
+        </div>
+    </div>
+</div>
+
+
+
+</form>
+
+{% endblock %}
