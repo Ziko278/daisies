@@ -1,0 +1,25 @@
+{% extends 'admin_dashboard/layout.html' %}
+{% block 'main' %}
+{% load static %}
+<div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Delete Hostel Room</h4>
+            <p>Room: <i>{{hostel_room.name|upper }}</i></p>
+
+            <p>The Room will be permanently deleted.</p>
+            {% if hostel_room.bed_room.all|length > 0 %}
+                <p>There are {{ hostel_room.bed_room.all|length }} bed{{ hostel_room.bed_room.all|length|pluralize }} in the hostel.</p>
+            {% else %}
+                <p>There is no registered bed in the room.</p>
+            {% endif%}
+            <form style="display:inline" method="post">
+                {% csrf_token %}
+
+                <button class="btn btn-success">Proceed</button>
+            </form>
+            <a class="btn btn-danger" href="{% url 'hostel_room_detail' hostel_room.id %}"> Cancel</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

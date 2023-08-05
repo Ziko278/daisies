@@ -1,0 +1,221 @@
+{% extends 'admin_dashboard/layout.html' %}
+{% load static %}
+{% block 'main' %}
+<div class="card">
+    <div class="card-body ">
+        <h5 class="card-title">Actions</h5>
+        <button title="Edit Transport Route" type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#edit{{ forloop.counter }}"><i class="bi bi-pencil-square"></i></button>
+        <button title="Add Path" type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#add-path"><i class="bi bi-pin-map"></i></button>
+        <a type="button" title="Delete Route" href="{% url 'transport_route_delete' transport_route.id %}" class="btn btn-outline-danger"><i class="bi bi-trash"></i></a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body pt-3">
+                <ul class="nav nav-tabs nav-tabs-bordered">
+                    <li class="nav-item">
+                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Route Details</button>
+                    </li>
+
+                </ul>
+
+                <div class="tab-content pt-2">
+                    <div class="tab-pane fade show active profile-overview" id="profile-overview">
+                        <h5 class="card-title">Transport Route Details</h5>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="card info-card sales-card">
+                                    <div class="card-body">
+                                        <h5 class="card-title"></h5>
+                                        <div class="d-flex align-items-center">
+                                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                <i class="bi bi-house-door-fill"></i>
+                                            </div>
+                                            <div class="ps-3">
+                                                <h6>{{ transport_route.name|title }}</h6>
+                                                <span class="text-muted small pt-2 ps-1">Route Name</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="card info-card sales-card">
+                                    <div class="card-body">
+                                        <h5 class="card-title"></h5>
+                                        <div class="d-flex align-items-center">
+                                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                <i class="bi bi-pin-map-fill"></i>
+                                            </div>
+                                            <div class="ps-3">
+                                                <h6>{{ transport_route.route_paths.all|length }}</h6>
+                                                <span class="text-muted small pt-2 ps-1">Added Path</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Transport Path</h5>
+                                        <ul class="list-group">
+                                            {% for path in path_list %}
+                                            <li class="list-group-item text-center" {% if path.description %} title="{{ path.description }}" {% endif %}>{{ path|upper }}</li>
+                                            {% if forloop.counter < path_list|length %}
+                                            <li class="list-group-item text-center"><i class="bi bi-arrow-down-circle-fill text-success"></i> </li>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Transport Path</h5>
+                                        <ul class="list-group">
+                                            {% for path in path_list %}
+                                            <li class="list-group-item">
+                                                {{ path|title }}
+                                                <span style="float:right">
+                                                    <button title="Edit Transport Path" type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editpath{{ forloop.counter }}"><i class="bi bi-pencil-square"></i></button>
+                                                    <a type="button" title="Delete Path" href="{% url 'transport_path_delete' path.id %}" class="btn btn-outline-danger"><i class="bi bi-trash"></i></a>
+                                                </span>
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <p>{% if transport_route.description %} {{ transport_route.description }}  {% endif %}</i></p>
+                            <p><i>This route was created by {{ transport_route.user|lower }} at {{ transport_route.created_at|date }} {% if transport_route.updated_by %} and updated by {{ transport_route.updated_by|lower }} at {{ transport_route.updated_at|date }} {% endif %}</i></p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form method="POST" action="{% url 'transport_route_edit' transport_route.id %}">
+    {% csrf_token %}
+    <div class="modal fade" id="edit{{ forloop.counter }}" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Transport Route - {{ transport_route|upper }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body row">
+                    <input type="hidden" name="updated_by" value="{{ user.id }}" />
+                    <div class="form-floating col-md-6">
+                        <input type="text" name="name" class="form-control" value="{{ transport_route.name }}" required>
+                        <label for="floatingName">Route Name <span style="color:red"><b>*</b></span></label>
+                    </div><br />
+
+                    <div class="form-floating col-md-6">
+                        <textarea class="form-control" name="description">{{ transport_route.description }}</textarea>
+                        <label for="floatingName">Description </label>
+                    </div><br />
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<form method="POST" action="{% url 'transport_path_create' %}">
+    {% csrf_token %}
+    <div class="modal fade" id="add-path" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Path to Route - {{ transport_route|upper }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body row">
+                    <input type="hidden" name="route" value="{{ transport_route.id }}" />
+                    <input type="hidden" name="user" value="{{ user.id }}" />
+                    <input type="hidden" name="type" value="{{ user.profile.type }}" />
+                    <div class="form-floating col-md-6">
+                        {{ form.name }}
+                        <label for="floatingName">Path Name <span style="color:red"><b>*</b></span></label>
+                    </div><br />
+
+                    <div class="form-floating col-md-6">
+                        {{ form.order }}
+                        <br />
+                        <label for="floatingName">Path Order <span style="color:red"><b>*</b></span></label>
+                    </div><br />
+
+                    <div class="form-floating col-md-12">
+                        {{ form.description }}
+                        <label for="floatingName">Path Description </label>
+                    </div><br />
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+{% for path in path_list %}
+<form method="POST" action="{% url 'transport_path_edit' path.id %}">
+    {% csrf_token %}
+    <div class="modal fade" id="editpath{{forloop.counter}}" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Path Detail</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body row">
+                    <input type="hidden" name="updated_by" value="{{ user.id }}" />
+                    <div class="form-floating col-md-6">
+                        <input type="text" name="name" class="form-control" value="{{path.name}}" required>
+                        <label for="floatingName">Path Name <span style="color:red"><b>*</b></span></label>
+                    </div><br />
+
+                    <div class="form-floating col-md-6">
+                        <input type="number" name="order" class="form-control" value="{{path.order}}">
+                        <br />
+                        <label for="floatingName">Path Order <span style="color:red"><b>*</b></span></label>
+                    </div><br />
+
+                    <div class="form-floating col-md-12">
+                        <textarea class="form-control" name="description">{{path.description}}</textarea>
+                        <label for="floatingName">Path Description </label>
+                    </div><br />
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endfor %}
+
+{%endblock %}

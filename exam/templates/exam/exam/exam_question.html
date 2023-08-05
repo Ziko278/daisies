@@ -1,0 +1,292 @@
+{% extends 'admin_dashboard/layout.html' %}
+{% block 'main' %}
+{% load static %}
+<div class="col-lg-12 grid-margin stretch-card">
+
+    <div class="card">
+        <div class="filter">
+        <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+            <li class="dropdown-header text-start">
+                <h6>Action</h6>
+            </li>
+
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#verticalycentered">Add Question</button>
+        </ul>
+    </div>
+        <div class="card-body">
+            <h4 class="card-title text-center">Exam Questions</h4>
+            <h4 style="margin-top:-20px" class="card-title text-center">{{ exam.term|upper }} EXAM OF {{ exam.session|upper }} SESSION</h4>
+            <h4 style="margin-top:-20px" class="card-title text-center">{{ subject|upper }} {{ student_class|upper }} {% if class_section %} {{ class_section|upper }} {% endif %} </h4>
+
+            <ol class="list-group">
+                {% for question in question_list %}
+                <li class="list-group-item d-flex justify-content-between align-items-start">
+                  <div class="ms-2 me-auto">
+                    <div class="fw-bold">{{ question.numbering }}. {{ question.question }}</div>
+                      {% if question.question_type == 'subjective' %}
+                      <b>Ans.</b> {{ question.subjective_answer }}
+                      {% elif question.question_type == 'theory' %}
+                        <b>Ans.</b> {{ question.theory_answer }} <br />
+                            {% if question.sub_questions.all %}
+                            <ul class="list-group list-group-flush">
+                                {% for sub_question in question.sub_questions.all %}
+                                <li class="list-group-item d-flex justify-content-between align-items-start">
+                                  <div class="ms-2 me-auto">
+                                    <div class="fw-bold">{{ sub_question.numbering }}. {{ sub_question.question }}</div>
+                                      {% if sub_question.question_type == 'theory' %}
+                                        <b>Ans.</b> {{ sub_question.theory_answer }} <br />
+                                            {% if sub_question.sub_questions.all %}
+                                                <ul class="list-group list-group-flush">
+                                                {% for inner_question in sub_question.sub_questions.all %}
+                                                    {% if inner_question.question_type == 'theory' and inner_question.is_sub %}
+                                                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                                                          <div class="ms-2 me-auto">
+                                                            <div class="fw-bold">{{ inner_question.numbering }}. {{ inner_question.question }}</div>
+                                                                <b>Ans.</b> {{ inner_question.theory_answer }} <br />
+                                                          </div>
+                                                          <span class="badge bg-primary rounded-pill">{{ question.mark|floatformat }}</span>
+                                                        </li>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </ul>
+                                            {% endif %}
+                                        <br />
+                                        <button title="Add Sub Question" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addsubquestion{{ sub_question.id }}"><i class="bi bi-plus-circle"></i></button>
+                                      {% endif %}
+                                  </div>
+                                  <span class="badge bg-primary rounded-pill">{{ question.mark|floatformat }}</span>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                        <br />
+                        <button title="Add Sub Question" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addsubquestion{{ question.id }}"><i class="bi bi-plus-circle"></i></button>
+
+                      {% elif question.question_type == 'objective' %}
+                        {% if question.options %}
+                        <ol class="list-group row" style="width:100%">
+                            {% for option in question.options.all %}
+                            <li class="list-group-item" style="border:0px solid black;display:inline;{% if question.correct_option == option %}color:green;text-decoration:underline {% endif %}"><b>{{ option.numbering }}.</b> {{ option.option }}</li>
+                            {% endfor %}
+                            </ol>
+                        {% else %}
+                            <p class="No option Added Yet"></p>
+                        {% endif %}
+                      <br />
+                      <button title="Add Option" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addquestion{{ forloop.counter }}"><i class="bi bi-plus-circle"></i></button>
+                      <div style="display:inline-block;margin-left:50px">
+                          <form action="{% url 'exam_question_answer' question.id %}" method="POST">
+                              {% csrf_token %}
+                              <span style="display:inline">Correct Option</span>
+                              <select class="form-control" style="display:inline" required name="correct_option">
+                                  <option value="">-----------</option>
+                                  {% for option in question.options.all %}
+                                  <option value="{{ option.id }}" {% if question.correct_option == option %} selected {% endif %}>{{ option.numbering }}. {{ option.option }}</option>
+                                {% endfor %}
+                              </select>
+                              <input type="submit" value="save" class="btn btn-primary" />
+
+                          </form>
+                      </div>
+                      {% endif %}
+                  </div>
+                  <span class="badge bg-primary rounded-pill">{{ question.mark|floatformat }}</span>
+                </li>
+                {% endfor %}
+              </ol>
+        </div>
+    </div>
+</div>
+
+<form method="POST" action="{% url 'exam_question_create' %}">
+    {% csrf_token %}
+    <input type="hidden" name="timetable" value="{{ timetable.id }}">
+    <input type="hidden" name="student_class" value="{{ student_class.id }}">
+    <input type="hidden" name="class_section" value="{{ class_section.id }}">
+    <input type="hidden" name="subject" value="{{ subject.id }}">
+    <input type="hidden" name="type" value="{{ 'pri' }}" />
+    <div class="modal fade" id="verticalycentered" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Question</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body row">
+                    <div class="form-floating col-md-3">
+                        {{ question_form.numbering }}
+                        <label for="floatingName">Question Numbering <span style="color:red"><b>*</b></span></label>
+                    </div><br />
+
+                    <div class="form-floating col-md-9">
+                        {{ question_form.question }}
+                        <br />
+                        <label for="floatingName">Question <span style="color:red"><b>*</b></span></label>
+                    </div><br />
+
+                    <div class="form-floating col-md-3">
+                        {{ question_form.question_type }}
+                        <br />
+                        <label for="floatingName">Question Type <span style="color:red"><b>*</b></span></label>
+                    </div><br />
+
+                    <div class="form-floating col-md-3">
+                        {{ question_form.mark }}
+                        <label for="floatingName">Question Mark<span style="color:red"><b>*</b></span></label>
+                    </div><br />
+
+                    <div class="form-floating col-md-6">
+                        {{ question_form.subjective_answer }}
+                        <label for="floatingName">Subjective Answer<span style="color:red"><b>*</b></span></label>
+                    </div><br />
+
+                    <div class="form-floating col-md-12">
+                        {{ question_form.theory_answer }}
+                        <label for="floatingName">Theory Answer<span style="color:red"><b>*</b></span></label>
+                    </div><br />
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+{% for question in question_list %}
+    {% if question.question_type == 'objective'  %}
+    <form method="POST" action="{% url 'exam_question_option_create' %}">
+        {% csrf_token %}
+        <div class="modal fade" id="addquestion{{ forloop.counter }}" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add Option</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-floating">
+                            {{ option_form.numbering }}
+                            <input type="hidden" name="question" value="{{ question.id }}" />
+                            <label for="floatingName">Option Numbering <span style="color:red"><b>*</b></span></label>
+                        </div><br />
+
+                        <div class="form-floating">
+                            {{ option_form.option }}
+                            <label for="floatingName">Option <span style="color:red"><b>*</b></span></label>
+                        </div><br />
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    {% endif %}
+
+    {% if question.question_type == 'theory'  %}
+    <form method="POST" action="{% url 'exam_add_sub_question' question.id %}">
+        {% csrf_token %}
+        <input type="hidden" name="timetable" value="{{ timetable.id }}">
+        <div class="modal fade" id="addsubquestion{{ question.id }}" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add Sub Question</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body row">
+                        <div class="form-floating col-md-3">
+                            {{ question_form.numbering }}
+                            <label for="floatingName">Question Numbering <span style="color:red"><b>*</b></span></label>
+                        </div><br />
+
+                        <div class="form-floating col-md-9">
+                            {{ question_form.question }}
+                            <br />
+                            <label for="floatingName">Question <span style="color:red"><b>*</b></span></label>
+                        </div><br />
+
+                        <div class="form-floating col-md-3">
+                            {{ question_form.mark }}
+                            <label for="floatingName">Question Mark<span style="color:red"><b>*</b></span></label>
+                        </div><br />
+
+                        <div class="form-floating col-md-9">
+                            {{ question_form.theory_answer }}
+                            <label for="floatingName">Answer<span style="color:red"><b>*</b></span></label>
+                        </div><br />
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    {% endif %}
+{% endfor %}
+
+
+
+{% for main_question in question_list %}
+    {% if main_question.question_type == 'theory' and main_question.sub_questions.all %}
+        {% for question in main_question.sub_questions.all %}
+            <form method="POST" action="{% url 'exam_add_sub_question' question.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="timetable" value="{{ timetable.id }}">
+                <div class="modal fade" id="addsubquestion{{ question.id }}" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Add Sub Question</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body row">
+                                <div class="form-floating col-md-3">
+                                    {{ question_form.numbering }}
+                                    <label for="floatingName">Question Numbering <span style="color:red"><b>*</b></span></label>
+                                </div><br />
+
+                                <div class="form-floating col-md-9">
+                                    {{ question_form.question }}
+                                    <br />
+                                    <label for="floatingName">Question <span style="color:red"><b>*</b></span></label>
+                                </div><br />
+
+                                <div class="form-floating col-md-3">
+                                    {{ question_form.mark }}
+                                    <label for="floatingName">Question Mark<span style="color:red"><b>*</b></span></label>
+                                </div><br />
+
+                                <div class="form-floating col-md-9">
+                                    {{ question_form.theory_answer }}
+                                    <label for="floatingName">Answer<span style="color:red"><b>*</b></span></label>
+                                </div><br />
+
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Save changes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        {% endfor %}
+    {% endif %}
+{% endfor %}
+
+{% endblock %}

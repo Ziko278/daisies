@@ -1,0 +1,408 @@
+{% extends 'admin_dashboard/layout.html' %}
+{% load static %}
+{% load inventory_custom_filters %}
+{% block 'main' %}
+<style>
+	.customer-list li{
+		width:300px;
+		border:1px solid black;
+		margin:2px;
+		padding:2px;
+		border-radius:5px;
+		color:white;
+		background:grey;
+	}
+
+	.customer-list li:hover{
+		background:black;
+	}
+
+.search-result{
+	position:absolute;z-index:1000;
+	background:white;
+	min-width:200px;
+	padding:10px;
+	border:1px solid black;
+	left:50px;
+	border-radius:10px;
+	display:none;
+}
+.search-result li{
+	width:100%;
+	height:30px;
+	padding-left:10px;
+	border:1px solid grey;
+	margin-bottom:1px;
+}
+.search-result li:hover{
+	background:grey;
+	color:white;
+}
+</style>
+<div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">{{ student|title }} ({{ student.registration_number|upper }})</h4>
+            <h4 class="card-title" style="margin-top:-30px">{% if student.student_class %} {{ student.student_class|upper }} {{ student.class_section|upper }} {% endif %}</h4>
+            <h4 class="card-title" style="margin-top:-30px"> {{ student.gender }}</h4>
+            <img class="rounded-circle" style="display:inline;float:right;width:100px;height:100px;border-radius:5px;margin-top:-100px" {% if student.image %} src="/media/{{ student.image }}" {% else %} src="{% static 'admin_dashboard/images/default_image.jpg' %}" {% endif %} />
+
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body pt-3">
+                <ul class="nav nav-tabs nav-tabs-bordered">
+                    <li class="nav-item">
+                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Assigned Inventory</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#item-collect">Collect Item</button>
+                    </li>
+
+                </ul>
+
+                <div class="tab-content pt-2">
+                    <div class="tab-pane fade show active profile-overview" id="profile-overview">
+                        <h5 class="card-title">Assigned Inventory List for {{ student|title }} - {{ academic_setting.session }} Session {{ academic_setting.term|title }}</h5>
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Item (Qty)</th>
+                                <th scope="col">Quantity</th>
+                                <th scope="col">Cleared</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Action</th>
+
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% if assigned_inventory_list %}
+                            {% for assign in assigned_inventory_list %}
+                            <tr>
+                                <th scope="row"><a href="#">{{ forloop.counter }}</a></th>
+                                <td>{{ assign.inventory|title }} ({{assign.quantity_left}})</td>
+                                <td>{% if assign.quantity|stringformat:"" == assign.quantity|floatformat|stringformat:"" %} {{ assign.quantity|floatformat }} {% else %} {{ assign.quantity }} {% endif %}</td>
+                                <td>{% if assign|inventory_verified:student.id %} YES {% else %} NO {% endif %}</td>
+                                <th>{% if assign|inventory_is_collected:student.id == "collected" %} <span class="text-success">Collected</span> {% elif assign|inventory_is_collected:student.id == "part collected" %} <span class="text-warning">Part Collect</span>  {% else %} <span class="text-danger">Not Collected</span> {% endif %} </th>
+                                <td class="text-center">
+                                    <button type="button" title="Collect Item" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#edit{{ forloop.counter }}"><i class="bi bi-pencil-square"></i></button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% endif %}
+
+                            </tbody>
+                        </table>
+                        {% if not assigned_inventory_list %}
+                            <h3 class="text-center">No Item Assigned to Student</h3>
+                        {% endif %}
+                    </div>
+
+                    <div class="tab-pane fade profile-edit pt-3" id="item-collect">
+                        <div class="row">
+                            <div class="card-body">
+                                <h5 class="card-title">Items Purchase by {{ student|title }}</h5>
+                                <form action="{% url 'inventory_student_bulk_collect' student.id %}" method="POST">
+                                    {% csrf_token %}
+                                    <table class="table ">
+                                        <thead>
+                                            <tr>
+                                                <th class='text-center'>Item</th>
+                                                <th class='text-center'>Qty remaining</th>
+                                                <th class='text-center'>Selling Price (N)</th>
+                                                <th class='text-center'>Quantity</th>
+                                                <th class='text-center'>Price (N)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class='blank_row'><td></td></tr>
+                                            <tr class='product_row' id='sale_row1' row=1>
+                                                <td class=""><a id='1' class='remove_sale_row' href='#' style='display:inline;color:red;background:white;height:40px;'><i style='font-size:25px' class='bi bi-x'></i></a>
+                                                    <input autocomplete=off class="form-control m-bot15 product-name-input" type='text' style='display:inline;width:80%;' name='product_name[]' id='product-name1' row=1 />
+                                                    <input type='hidden' name='product_id[]' id='product-id1' /><br>
+                                                    <ul style='' class='search-result' id='result1'></ul>
+                                                </td>
+                                                <td>
+                                                    <p class='text-center' id='quantity_remaining1' row=1></p>
+                                                    <input type='hidden' id='quantity_remaining_val1' name='quantity_remaining[]' />
+                                                </td>
+                                                <td>
+                                                    <p class='text-center' id='selling_price1' row=1></p>
+                                                    <input type='hidden'  id='selling_price_val1' name='selling_price[]' />
+                                                </td>
+                                                <td class='text-center'>
+                                                    <div class="form-group col-md-4 text-center" style='align:center'>
+                                                        <input id='quantity_input1' step=".01" style='width:100px;display:none' min=0 row='1' type='number' class='one form-control col-lg-6'  name='quantity_input[]' placeholder=''>
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <p class='text-center total_price' id='total_price1' row=1></p>
+                                                    <input type='hidden' name='total_price[]' />
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                    <div class="row">
+                                        <div class="form-group col-md-3">
+                                            <label for="grand-total">Grand Total (N)</label>
+                                            <input type="number" class="form-control col-lg-6" value="0" readonly id="grand_total" name='grand_total' placeholder="">
+
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <br />
+                                        <button type="submit" style="width:150px;margin:20px" class="btn btn-primary">Proceed</button>
+                                        <button type="button" style="width:150px;margin:20px" id='add_row_button' class="btn btn-info">ADD ROW</button>
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% for assign in assigned_inventory_list %}
+
+<form method="POST" action="">
+    {% csrf_token %}
+    <div class="modal fade" id="edit{{ forloop.counter }}" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Give Out Student Inventory</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {% if not assign|inventory_verified:student.id %}
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">{{ student|title }} Not cleared for this Item</h4>
+                                <p class="card-description">It seem the student has not cleared some fees associated with
+                                the item, let to student pay such fees before collecting this item</p>
+                            </div>
+                        </div>
+                    {% elif assign.quantity_left == 0 %}
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">{{ assign.inventory|title }} is out of stock</h4>
+                                <p class="card-description">It seem the inventory item is out of stock. please restock the
+                                item before proceeding with this action</p>
+                            </div>
+                        </div>
+                    {% elif assign|inventory_left:student.id == 0 %}
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">Items already collected</h4>
+                                <p class="card-description">It seem {{ student|title }} has already collected the selected items</p>
+                            </div>
+                        </div>
+                    {% else %}
+
+                        <div class="card">
+                            <div class="card-body row">
+                                <h4 class="card-title">Confirm Action</h4>
+                                <p class="card-description">You are about to give out {{ assign.inventory|title }} to {{ student|title }}</p>
+                                <div class="form-floating col-md-6">
+                                    <input type="number" step="any" value="{{ assign|inventory_left:student.id }}" max="{{ assign|inventory_left:student.id }}" min="1" name="quantity" class="form-control" />
+                                    <label for="floatingName">Quantity <span style="color:red"><b>*</b></span></label>
+                                </div><br />
+
+                                <div class="form-floating col-md-6">
+                                    {{ form.date }}
+                                    <label for="floatingName">Date <span style="color:red"><b>*</b></span></label>
+                                </div><br />
+                            </div>
+                        </div>
+                    <input type="hidden" name="item" value="{{ assign.inventory.id }}" />
+                    <input type="hidden" name="student" value="{{ student.id }}" />
+                    <input type="hidden" name="mode" value="assign" />
+                    <input type="hidden" name="type" value="{{ user.profile.type }}" />
+                    <input type="hidden" name="user" value="{{ user.id }}" />
+
+
+                    {% endif %}
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                    {% if assign|inventory_verified:student.id and assign|inventory_left:student.id > 0 and assign.quantity_left > 0 %}
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+{% endfor %}
+
+<input type="hidden" id="serialized_inventory_list" value="{{ serialized_inventory_list }}">
+
+<script src="{% static 'admin_dashboard/scripts/jquery.js' %}"></script>
+<script type='text/javascript'>
+	$(document).on('ready', function(){
+
+	    $('#inventory_detail_div').hide()
+
+        serialized_inventory_list = $('#serialized_inventory_list').val()
+        serialized_inventory_list = JSON.parse(serialized_inventory_list)
+        serialized_inventory_name_list = {}
+        for(const key in serialized_inventory_list){
+            serialized_inventory_name_list[serialized_inventory_list[key]['pk']] = serialized_inventory_list[key]['fields']['name']
+            serialized_inventory_name_list[serialized_inventory_list[key]['pk']] = serialized_inventory_name_list[serialized_inventory_list[key]['pk']].toLowerCase()
+        }
+
+        $(document).on('keyup', '.product-name-input', function() {
+            row=$(this).attr('row')
+            inventory_detail_list = ''
+            search_value = $(this).val().toLowerCase()
+            search_value_array = search_value.split(" ")
+
+            if(search_value==''){
+                $('#result'+row).html('')
+                $('#result'+row).slideUp('fast')
+            }else{
+                for(const key in serialized_inventory_name_list){
+                    inventory_search_result = true
+                    for(const search_key in search_value_array){
+                        if(!serialized_inventory_name_list[key].includes(search_value_array[search_key])){
+                            inventory_search_result = false
+                        }
+                    }
+                    if(inventory_search_result==true){
+                        inventory_detail_list += "<li class='btn result-item' row=" + row + " id=" + key +"><b>" + serialized_inventory_name_list[key].toUpperCase() +"</b></li>";
+                    }
+                }
+                if(inventory_detail_list == ''){
+                    inventory_detail_list += "<li class='btn result-item' value='' style='color:red'><b> No Item Found</b></li>";
+                }
+            }
+
+            $('#result'+row).html(inventory_detail_list)
+			$('#result'+row).slideDown('fast')
+			totalAmount()
+        })
+
+
+        $(document).on('click', '.result-item', function() {
+			row=$(this).attr('row')
+			product_name=$(this).text()
+			if(product_name==''){
+				$('#quantity_remaining'+row).fadeOut()
+				$('#selling_price'+row).fadeOut()
+				$('#quantity_input'+row).fadeOut()
+				totalAmount()
+			}else{
+				id=$(this).attr('id')
+				for(const key in serialized_inventory_list){
+                    if(serialized_inventory_list[key]['pk'] == id){
+                        inventory_name = serialized_inventory_list[key]['fields']['name']
+                        selling_price = serialized_inventory_list[key]['fields']['selling_price']
+                        quantity_left = serialized_inventory_list[key]['fields']['quantity']
+                    }
+                }
+
+                $('#quantity_remaining'+row).text(quantity_left)
+                $('#quantity_remaining_val'+row).val(quantity_left)
+                $('#selling_price'+row).text(selling_price)
+                $('#selling_price_val'+row).val(selling_price)
+                $('#quantity_input'+row).fadeIn()
+                $('#quantity_input'+row).val('')
+                $('#quantity_input'+row).attr('max',quantity_left)
+                $('#quantity_input'+row).attr('min',1)
+                $('#quantity_input'+row).attr('required',true)
+                $('#total_price'+row).text(0)
+				$('#quantity_input'+row).attr('selling_price', selling_price)
+				$('#selling_price'+row).fadeIn()
+				$('#quantity_remaining'+row).fadeIn()
+				$('#product-name'+row).val(product_name)
+				$('#product-id'+row).val(id)
+				$('#product-name'+row).attr('readonly',true)
+				$('#result'+row).slideUp('fast')
+
+            }
+
+			quantity_input=$('#quantity_input'+row).val()
+			total_price=selling_price*quantity_input
+			$('#total_price'+row).text(total_price)
+
+			$(document).on('keyup','#quantity_input'+row,function() {
+			    row=$(this).attr('row')
+			    quantity_input=$(this).val()
+			    item_price=$(this).attr('selling_price')
+			    total_price=item_price*quantity_input
+			    $('#total_price'+row).text(total_price)
+			    totalAmount()
+
+			})
+
+			$(document).on('click','.remove_sale_row',function() {
+
+                row=$(this).attr('id')
+                $('#sale_row'+row).remove()
+                totalAmount()
+
+            })
+
+		})
+
+	$(document).on('click', '#add_row_button',  function() {
+		previous_row=$('.product_row').last().attr('row')
+		current_row=parseInt(previous_row)+1
+		$('.product_row').last().after("<tr class='product_row' id="+'sale_row'+current_row+" row="+current_row+"><td><a id="+current_row+" class='remove_sale_row' href='#' style='display:inline;color:red;background:white;height:40px;'><i style='font-size:25px' class='bi bi-x'></i></a><input autocomplete=off class='form-control m-bot15 product-name-input' type='text' style='display:inline;width:80%;' name='product_name[]' id="+'product-name' +current_row+ " row="+current_row+" /><input type='hidden' name='product_id[]' id=" +'product-id'+current_row+" /><br><ul style='' class='search-result' id=" +'result'+current_row+"></ul></td><td><p class='text-center' id="+'quantity_remaining'+current_row+" row="+current_row+"></p><input type='hidden' name='quantity_remaining[]' /></td><td class='text-center'><p class='text-center' id="+'selling_price'+current_row+" row="+current_row+"></p></td><td class='text-center'><div class='form-group col-md-4 text-center' style='align:center'><input id="+'quantity_input'+current_row+" row="+current_row+" style='display:none;width:100px' type='number' step='.01' class='form-control col-lg-6' id='' name='quantity_input[]' placeholder=''></div></td><td><p class='text-center total_price' id="+'total_price'+current_row+" row="+current_row+"></p><input type='hidden' name='total_price[]' /></td></tr>")
+        if($('.product_row').length==0){
+            current_row=1
+			$('.blank_row').after("<tr class='product_row' id="+'sale_row'+current_row+" row="+current_row+"><td><a id="+current_row+" class='remove_sale_row' href='#' style='display:inline;color:red;background:white;height:40px;'><i style='font-size:25px' class='bi bi-x'></i></a><input autocomplete=off class='form-control m-bot15 product-name-input' type='text' style='display:inline;width:80%;' name='product_name[]' id="+'product-name' +current_row+ " row="+current_row+" /><input type='hidden' name='product_id[]' id=" +'product-id'+current_row+" /><br><ul style='' class='search-result' id=" +'result'+current_row+"></ul></td><td><p class='text-center' id="+'quantity_remaining'+current_row+" row="+current_row+"></p><input type='hidden' name='quantity_remaining[]' /></td><td><p class='text-center' id="+'selling_price'+current_row+" row="+current_row+"></p></td><td class='text-center'><div class='form-group col-md-4 text-center' style='align:center'><input id="+'quantity_input'+current_row+" row="+current_row+" style='display:none;width:100px' type='number' step='.01' class='form-control col-lg-6' id='' name='quantity_input[]' placeholder=''></div></td><td><p class='text-center total_price' id="+'total_price'+current_row+" row="+current_row+"></p><input type='hidden' name='total_price[]' /></td></tr>")
+		}
+		totalAmount()
+    	amount_paid=$('#amount_paid').val()
+		total_amount=$('#grand_total').val()
+
+		balance=parseInt(total_amount)-parseInt(amount_paid)
+    	$('#balance').val(balance)
+
+	 })
+
+
+    totalAmount()
+
+
+
+})
+
+$(document).on('click','.remove_sale_row',function() {
+     row=$(this).attr('id')
+     $('#sale_row'+row).remove()
+     totalAmount()
+})
+
+function totalAmount(){
+    total_amount=0
+    $('.total_price').each(function(){
+        current_price=$(this).text()
+        current_price=parseInt(current_price)
+        total_amount=parseInt(total_amount)
+        total_amount+=current_price
+    })
+
+    $('#grand_total').val(total_amount)
+
+}
+
+</script>
+{%endblock %}

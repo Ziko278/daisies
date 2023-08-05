@@ -1,0 +1,71 @@
+{% extends 'admin_dashboard/layout.html' %}
+{% load static %}
+{% load humanize %}
+{% block 'main' %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="row" style="margin-bottom:10px">
+            <h3><b><span class="text-info">UTILITY SETTING DETAIL</span></b>
+                <button style="float:right;width:120px" type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#verticalycentered">Edit Info</button>
+            </h3>
+        </div>
+        {% if form.errors %}
+        <h5 class="text-danger">{{form.errors}}</h5>
+        {% endif %}
+
+        <div class="row">
+            <div class="col-xxl-4 col-md-6">
+                <div class="card info-card customers-card">
+                    <div class="card-body">
+                        <h5 class="card-title">Vehicle Drivers</h5>
+                        <ul class="list-group">
+                            {% if utility_info.drivers.all %}
+                                {% for driver in utility_info.drivers.all %}
+                                <li class="list-group-item">{{ driver|title }}</li>
+                                {% endfor %}
+                            {% else %}
+                                <li class="list-group-item">No Driver Selected</li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<form method="POST" {% if is_utility_info %} action="{% url 'utility_info_update' utility_info.id %}" {% else %} action="{% url 'utility_info_create' %}" {% endif %} enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="modal fade" id="verticalycentered" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Utility Setting Info</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body row">
+                    <div class="col-6">
+                        <input type="hidden" name="type" value="{{ user.profile.type }}" />
+                        <input type="hidden" name="user" value="{{ user.id }}" />
+                        <input type="hidden" name="updated_by" value="{{ user.id }}" />
+
+                        <div class="form-floatin">
+                            <h4 class="card-title">Select Drivers</h4>
+                            {{ form.drivers }}
+
+                        </div><br />
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+{% endblock %}

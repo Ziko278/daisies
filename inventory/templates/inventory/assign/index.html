@@ -1,0 +1,92 @@
+{% extends 'admin_dashboard/layout.html' %}
+{% block 'main' %}
+{% load static %}
+
+<div class="col-12">
+    <div class="card recent-sales overflow-auto">
+        <div class="filter">
+            <a title="Add Item" class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                <li class="dropdown-header text-start">
+                    <h6>Action</h6>
+                </li>
+
+                <li><a class="dropdown-item" href="#">
+                    <a title="Assign Item" href="{% url 'inventory_assign_create' %}" class="btn btn-primary" style="width:100%">Assign Item</a>
+                </a></li>
+            </ul>
+        </div>
+
+        <div class="card-body">
+            <h5 class="card-title">List of Inventory Items Assignment to Class
+                {% if school_info.separate_school_section and school_info.school_type == 'mix' %}
+                    {% if user.profile.type == 'pri' %}
+                        in Primary Division of the School
+                    {% elif user.profile.type == 'sec' %}
+                        in Secondary Division of the School
+                    {% elif user.profile.type == 'mix' %}
+                        in the School
+                    {% endif %}
+                {% endif %}
+            </h5>
+            {% if form.errors %}
+                <h5 class="text-danger">{{form.errors}}</h5>
+            {% endif %}
+            <table class="table table-borderless datatable">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Item</th>
+                    <th scope="col">QTY</th>
+                    <th scope="col">Term</th>
+                    <th scope="col">Class</th>
+                    <th scope="col">Section</th>
+                    {% if school_info.school_type|lower == 'mix' and not school_info.separate_school_section %} <th scope="col">Category</th> {% endif %}
+                    <th scope="col" class="text-center">Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% if inventory_assign_list %}
+                {% for assign in inventory_assign_list %}
+                <tr>
+                    <th scope="row"><a href="#">{{ forloop.counter }}</a></th>
+                    <td title="created by {{ assign.user|lower }} on {{ assign.created_at|date }} {% if assign.updated_by %} and updated by {{ assign.updated_by|lower }} at {{ assign.updated_at|date }} {% endif %}">
+                        {{ assign.inventory.name|title }}</td>
+                    <td>{% if assign.quantity|stringformat:"" == assign.quantity|floatformat|stringformat:"" %} {{ assign.quantity|floatformat }} {% else %} {{ assign.quantity }} {% endif %}</td>
+                    <td>{{ assign.term|title }}</td>
+                    <td><ul style="list-style:none">
+                            {% for class in assign.student_class.all %}
+                            <li>{{ class.name|upper }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td><ul style="list-style:none">
+                            {% for section in assign.class_section.all %}
+                            <li>{{ section.name|upper }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    {% if school_info.school_type|lower == 'mix' and not school_info.separate_school_section %}
+                    <td>{% if assign.type|lower == 'pri' %} PRIMARY {% elif assign.type|lower == 'sec' %} SECONDARY  {% endif %} </td>
+                    {% endif %}
+                    <td class="text-center">
+                        <a title="Edit Item" href="{% url 'inventory_assign_edit' assign.id %}" class="btn btn-warning"><i class="bi bi-pencil-square"></i></a>
+                        <a title="View Detail" href="{% url 'inventory_assign_detail' assign.id %}" class="btn btn-primary"><i class="bi bi-eye"></i></a>
+                        <a title="Delete Item" href="{% url 'inventory_assign_delete' assign.id %}" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% endif %}
+
+
+                </tbody>
+            </table>
+            {% if not inventory_assign_list %}
+                <h3 class="text-center">No Item Assigned Yet</h3>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

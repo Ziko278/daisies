@@ -1,3 +1,2 @@
-from django.db import models
+from school_setting.models import SchoolGeneralInfoModel
 
-# Create your models here.

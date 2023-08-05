@@ -1,0 +1,40 @@
+{% extends 'admin_dashboard/layout.html' %}
+{% load static %}
+{% block 'main' %}
+<div class="card">
+    <div class="card-body ">
+        <h5 class="card-title">Actions</h5>
+        <a title="Edit Note Detail" href="{% url 'lesson_note_edit' lesson_note.id %}" class="btn btn-warning"><i class="bi bi-pencil-square"></i></a>
+        <a title="Delete Note" href="{% url 'lesson_note_delete' lesson_note.id %}" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body pt-3">
+                <ul class="nav nav-tabs nav-tabs-bordered">
+                    <li class="nav-item">
+                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Lesson Note Detail</button>
+                    </li>
+
+                </ul>
+
+                <div class="tab-content pt-2">
+                    <div class="tab-pane fade show active profile-overview" id="profile-overview">
+                        <h5 class="card-title">{{ lesson_note.subject|title }}: {{ lesson_note.title }}</h5>
+                        <p class="card-description">{% for class in lesson_note.student_class.all %} <span style="margin-right:15px"> {{ class }} </span> {% endfor %}</p>
+                        <p class="card-description">Student Access: {% if lesson_note.grant_access %} YES {% else %} NO {% endif %}</p>
+                        <div class="row">
+                            {{ lesson_note.content|safe }}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{%endblock %}

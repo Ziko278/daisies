@@ -1,0 +1,152 @@
+{% extends 'admin_dashboard/layout.html' %}
+{% load static %}
+{% load humanize %}
+{% block 'main' %}
+
+<section class="section dashboard">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="row">
+                <div class="col-xxl-4 col-md-4">
+                    <div class="card info-card sales-card">
+                        <div class="card-body">
+                            <h5 class="card-title">Books <span>| Total Books</span></h5>
+                            <div class="d-flex align-items-center">
+                                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-book"></i>
+                                </div>
+                                <div class="ps-3">
+                                    <h6>{{ distinct_books }}</h6>
+                                    <span class="text small pt-1 fw-bold">Total Distinct Books</span> <span class="text-muted small pt-2 ps-1"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xxl-4 col-md-4">
+                    <div class="card info-card sales-card">
+                        <div class="card-body">
+                            <h5 class="card-title">Books <span>| Total Copies</span></h5>
+                            <div class="d-flex align-items-center">
+                                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-book-fill"></i>
+                                </div>
+                                <div class="ps-3">
+                                    <h6>{{ distinct_copy }}</h6>
+                                    <span class="text small pt-1 fw-bold">Total Distinct Copy</span> <span class="text-muted small pt-2 ps-1"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xxl-4 col-md-4">
+                    <div class="card info-card sales-card">
+                        <div class="card-body">
+                            <h5 class="card-title">PDF <span>| Total Copies</span></h5>
+                            <div class="d-flex align-items-center">
+                                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-book-fill"></i>
+                                </div>
+                                <div class="ps-3">
+                                    <h6>{{ pdf_book }}</h6>
+                                    <span class="text small pt-1 fw-bold">Total PDF</span> <span class="text-muted small pt-2 ps-1"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xxl-4 col-md-4">
+                    <div class="card info-card sales-card">
+                        <div class="card-body">
+                            <h5 class="card-title">E-Book <span>| Total Copies</span></h5>
+                            <div class="d-flex align-items-center">
+                                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-book-fill"></i>
+                                </div>
+                                <div class="ps-3">
+                                    <h6>{{ e_book }}</h6>
+                                    <span class="text small pt-1 fw-bold">Total E-Book</span> <span class="text-muted small pt-2 ps-1"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xxl-4 col-md-4">
+                    <div class="card info-card sales-card">
+                        <div class="card-body">
+                            <h5 class="card-title">Books <span>| Available Copies</span></h5>
+                            <div class="d-flex align-items-center">
+                                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-book-fill"></i>
+                                </div>
+                                <div class="ps-3">
+                                    <h6>{{ available_book }}</h6>
+                                    <span class="text small pt-1 fw-bold">Available Books</span> <span class="text-muted small pt-2 ps-1"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xxl-4 col-md-4">
+                    <div class="card info-card sales-card">
+                        <div class="card-body">
+                            <h5 class="card-title">Books <span>| Borrowed Copies</span></h5>
+                            <div class="d-flex align-items-center">
+                                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-book-fill"></i>
+                                </div>
+                                <div class="ps-3">
+                                    <h6>{{ borrowed_book }}</h6>
+                                    <span class="text small pt-1 fw-bold">Borrowed Books</span> <span class="text-muted small pt-2 ps-1"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xxl-4 col-md-6">
+                    <div class="card info-card revenue-card">
+                        <div class="card-body">
+                            <h5 class="card-title">Book <span>| Most Borrowed</span></h5>
+                            <div class="d-flex align-items-center">
+                                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-book"></i>
+                                </div>
+                                <div class="ps-3">
+                                    <h6>{{ most_borrowed_book }}</h6>
+                                    <span class="text-grey small pt-1 fw-bold">Most Borrowed Book</span> <span class="text-muted small pt-2 ps-1"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xxl-4 col-md-6">
+                    <div class="card info-card revenue-card">
+                        <div class="card-body">
+                            <h5 class="card-title">Student <span>| Most Borrow</span></h5>
+                            <div class="d-flex align-items-center">
+                                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-person"></i>
+                                </div>
+                                <div class="ps-3">
+                                    <h6>{{ most_borrowing_student|title }}</h6>
+                                    <span class="text-grey small pt-1 fw-bold">Most Borrowing Student</span> <span class="text-muted small pt-2 ps-1"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div><!-- End Left side columns -->
+
+</section>
+{% endblock %}

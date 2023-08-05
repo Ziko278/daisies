@@ -1,0 +1,178 @@
+{% extends 'admin_dashboard/layout.html' %}
+{% block 'main' %}
+{% load static %}
+
+<div class="col-12">
+    <div class="card recent-sales overflow-auto">
+        <div class="filter">
+            <a title="Add Vehicle" class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                <li class="dropdown-header text-start">
+                    <h6>Action</h6>
+                </li>
+
+                <li><a class="dropdown-item" href="#">
+                    <button title="Add Vehicle" style="width:100%" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#verticalycentered">Add Vehicle</button>
+                </a></li>
+            </ul>
+        </div>
+
+        <div class="card-body">
+            <h5 class="card-title">List of Transport Vehicle
+                {% if school_info.separate_school_section and school_info.school_type == 'mix' %}
+                    {% if user.profile.type == 'pri' %}
+                        in Primary Division of the School
+                    {% elif user.profile.type == 'sec' %}
+                        in Secondary Division of the School
+                    {% elif user.profile.type == 'mix' %}
+                        in the School
+                    {% endif %}
+                {% endif %}
+            </h5>
+            {% if form.errors %}
+                <h5 class="text-danger">{{form.errors}}</h5>
+            {% endif %}
+            <table class="table table-borderless datatable">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Vehicle Name/ID</th>
+                    <th scope="col">Route</th>
+                    <th scope="col">Driver</th>
+                    <th scope="col">Attendant</th>
+                    {% if school_info.school_type|lower == 'mix' and not school_info.separate_school_section %} <th scope="col">Category</th> {% endif %}
+                    <th scope="col" class="text-center">Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% if transport_vehicle_list %}
+                {% for vehicle in transport_vehicle_list %}
+                <tr>
+                    <th scope="row"><a href="#">{{ forloop.counter }}</a></th>
+                    <td  title="created by {{ vehicle.user|lower }} at {{ vehicle.created_at|date }} {% if vehicle.updated_by %} and updated by {{ vehicle.updated_by|lower }} at {{ vehicle.updated_at|date }} {% endif %}">{{ vehicle.vehicle_id|upper }}</td>
+                    <td>{% if vehicle.route %} <a href="{% url 'transport_route_detail' vehicle.route.id %}" style="color:black">{{ vehicle.route }} </a>  {% endif %}</td>
+                    <td>{% if vehicle.driver %} <a href="{% url 'staff_detail' vehicle.driver.id %}" style="color:black">{{ vehicle.driver }} </a>  {% endif %}</td>
+                    <td>{% if vehicle.attendant %} <a href="{% url 'staff_detail' vehicle.attendant.id %}" style="color:black">{{ vehicle.attendant }} </a>  {% endif %}</td>
+
+                    {% if school_info.school_type|lower == 'mix' and not school_info.separate_school_section %}
+                    <td>{% if route.type|lower == 'pri' %} PRIMARY {% elif route.type|lower == 'sec' %} SECONDARY  {% endif %} </td>
+                    {% endif %}
+                    <td class="text-center">
+                        <a href="{% url 'transport_vehicle_detail' vehicle.id %}" title="View Vehicle Detail" class="btn btn-primary"><i class="bi bi-eye"></i></a>
+                        <a href="{% url 'transport_vehicle_delete' vehicle.id %}" title="Delete Vehicle" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+
+                    </td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                    <tr><td colspan="8"><h3 class="text-center">No Transport Vehicle Added Yet</h3></td></tr>
+                {% endif %}
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<form method="POST" action="{% url 'transport_vehicle_create' %}">
+    {% csrf_token %}
+    <input type="hidden" name="type" value="pri">
+    <div class="modal fade" id="verticalycentered" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Transport Vehicle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body row">
+                    <div class="form-floating col-md-6">
+                        {{ form.vehicle_id }}
+                        <input type="hidden" name="type" value="{{ user.profile.type }}" />
+                        <input type="hidden" name="user" value="{{ user.id }}" />
+                        <label for="floatingName">Vehicle Name/ID <span style="color:red"><b>*</b></span></label>
+                    </div><br />
+
+                    <div class="form-floating col-md-6">
+                        {{ form.plate_number }}
+                        <br />
+                        <label for="floatingName">Plate Number</label>
+                    </div><br />
+
+                    <div class="form-floating col-md-6">
+                        {{ form.route }}
+                        <br />
+                        <label for="floatingName">Intended Route</label>
+                    </div><br />
+
+                    <div class="form-floating col-md-6">
+                        {{ form.driver }}
+                        <br />
+                        <label for="floatingName">Driver</label>
+                    </div><br />
+
+                    <div class="form-floating col-md-6">
+                        {{ form.attendant }}
+                        <br />
+                        <label for="floatingName">Vehicle Attendant</label>
+                    </div><br />
+
+                    <div class="form-floating col-md-6">
+                        {{ form.phone_number }}
+                        <br />
+                        <label for="floatingName">Associated Phone Number</label>
+                    </div><br />
+
+                    <div class="form-floating col-md-6">
+                        {{ form.status }}
+                        <br />
+                        <label for="floatingName">Status</label>
+                    </div><br />
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+{% for route in transport_route_list %}
+<form method="POST" action="{% url 'transport_route_edit' route.id %}">
+
+    {% csrf_token %}
+    <div class="modal fade" id="edit{{ forloop.counter }}" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Transport Route - {{ route|upper }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body row">
+                    <input type="hidden" name="updated_by" value="{{ user.id }}" />
+                    <div class="form-floating col-md-6">
+                        <input type="text" name="name" class="form-control" value="{{ route.name }}" required>
+                        <label for="floatingName">Route Name <span style="color:red"><b>*</b></span></label>
+                    </div><br />
+
+                    <div class="form-floating col-md-6">
+                        <textarea class="form-control" name="description">{{ route.description }}</textarea>
+                        <label for="floatingName">Description </label>
+                    </div><br />
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endfor %}
+
+
+{% endblock %}

@@ -1,0 +1,391 @@
+{% extends 'front_cms/layout/layout1.html' %}
+{% block 'main' %}
+{% load static %}
+<div id="s5_header_spacer"></div>
+<div id="s5_pos_custom_2">
+    <div class="moduletable">
+        <link href="https://daisiesacademy.com.ng/modules/mod_s5_image_and_content_fader/css/s5imagecontent.css" rel="stylesheet"  property="stylesheet" type="text/css" media="screen" />
+        <script type="text/javascript">
+            function s5_icfstartGallery() {
+            document.getElementById("s5_iacf_content_wrap").style.display = 'block';
+            window.myGallery = new gallery(jQuery('#myGallery'), {
+                    timed: true,
+                    showArrows: false,
+                    showCarousel: true,
+                    showInfopane: true,
+                    slideShowDuration:1000,
+                    slideHideDuration:500,
+                    fadeDuration:500,
+                    randomOrder:"no",
+
+                    delay: 8000,
+
+                                                defaultTransition: "continuoushorizontal"
+
+                                                                                        });
+                                    jQuery('#myGallery').bind('mouseover',function(){window.myGallery.clearTimer();});
+                jQuery('#myGallery').bind('mouseout',function(){window.myGallery.prepareTimer();});
+                            }
+            function s5_icfstartGalleryload() {
+                s5_icfstartGallery();
+                setTimeout(function(){
+                    // add js to fix active slide on first load.
+                    jQuery('.carouselInner div.thumbnail').css('opacity', '0.1');
+                }, 100);
+            }
+            window.setTimeout(s5_icfstartGalleryload,400);
+        </script>
+
+        <div class="content " style="position:relative;z-index:0">
+            <div id="myGallery" style="background:#333333;width:100%;">
+                <div id="myGallery_height">
+                    <img id="myGallery_height_img" alt="images/daisies/slides/slide-bgrd-daisies-2.jpg" src="/images/daisies/slides/slide-bgrd-daisies-2.jpg" />
+                </div>
+
+                <div id="s5_iacf_content_wrap" style="display:none">
+                    {% for slider in slider_list %}
+                    <div class="imageElement" style="z-index:0;background-color: rgba(0, 0, 0, 0.8);">
+                        <h3></h3>
+                        <p class="{% if forloop.counter == 2 or forloop.counter == 4 %} text-center {% endif %}" style="text-shadow:1px 1px #000000;background-color: rgba(0, 0, 0, 0.8);">
+                            <span class="left">
+                                <span class="slide_title">
+                                    {{ slider.title }}
+                                </span>
+                                <span class="slide_text">
+                                    {{ slider.description }}
+                                </span>
+                                <br />
+                                {% if slider.button_link and slider.button_text %}
+                                <a class="readon" href="{% url slider.button_link %}">{{ slider.button_text|title }}</a>
+                                {% endif %}
+                            </span>
+                            <span class="right">
+                                <img alt="" src="/media/{{ slider.second_image }}" />
+                            </span>
+                        </p>
+
+                        <a href="javascript:;" title="open image" class="open"></a>
+                        <img src="/media/{{ slider.image }}" alt="" class="full" />
+                        <img src="/media/{{ slider.image }}" alt="" class="thumbnail" />
+                    </div>
+                    {% endfor %}
+
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">//<![CDATA[
+        document.write('<style>.jdGallery .slideElement {background-size:100% auto;}@media screen and (max-width: 1900px) {#myGallery { height:700px !important; } .jdGallery .slideElement {background-size:cover !important;}}</style>');
+    //]]></script>
+    </div>
+    <div style="clear:both; height:0px"></div>
+</div>
+
+<!-- Top Row1 -->
+<div id="s5_top_row1_area1">
+    <div id="s5_top_row1_area2">
+        <div id="s5_top_row1_area_inner" class="s5_wrap s5_iacf_overlay">
+            <div id="s5_top_row1_wrap">
+                <div id="s5_top_row1">
+                    <div id="s5_top_row1_inner">
+                        <div id="s5_pos_top_row1_1" class="s5_float_left" style="width:100%">
+                            <div class="module_round_box_outer">
+                                <div class="module_round_box ">
+                                    <div class="s5_module_box_1">
+                                        <div class="s5_module_box_2">
+                                            <div class="s5_outer ">
+                                                <div class="custom"  >
+                                                    <div class="right_border" style="padding-right: 50px; border-right: solid 1px #EBE8E8; margin-right: 25px;">
+                                                        <h3 class="lowercase_title">Welcome to our <strong>School</strong></h3>
+                                                        <p>Welcome to <strong>{{ school_info|title }}</strong>, we are thrilled to welcome you to another exciting academic year. As  we embark on this journey together, we want to extend our warm heartfelt welcome to both new and returning members </p>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div style="clear:both; height:0px"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="clear:both; height:0px"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Top Row1 -->
+
+<div id="s5_pos_custom_3">
+    <div id="s5_pos_custom_3_inner" class="s5_wrap">
+        <div class="moduletable">
+            <script language="javascript" type="text/javascript" >var s5_ifvisible = 3;</script>
+            <script type="text/javascript">//<![CDATA[
+                document.write('<link href="https://daisiesacademy.com.ng/modules/mod_s5_tabshow/s5_tabshow/styles.css" rel="stylesheet" type="text/css" media="screen" />');
+                //]]>
+            </script>
+
+            <style type="text/css">
+                #s5_button_frame.s5_button_frame_380 ul li a {
+                            color: #000000;
+                        }
+                #s5_button_frame.s5_button_frame_380 ul li.s5_ts_not_active {
+                            background-image: url(/../modules/mod_s5_tabshow/s5_tabshow/s5_tab_show_nonactive.png);
+                    background-size: cover;
+                                    background-color: transparent;
+                        }
+
+                #s5_button_frame.s5_button_frame_380 ul li a:hover,
+                #s5_button_frame.s5_button_frame_380 ul li a:active,
+                #s5_button_frame.s5_button_frame_380 ul li a:focus,
+                #s5_button_frame.s5_button_frame_380 ul li.s5_ts_active a,
+                #s5_button_frame.s5_button_frame_380 ul li.s5_ts_active a:hover,
+                #s5_button_frame.s5_button_frame_380 ul li.s5_ts_active a:visited,
+                #s5_button_frame.s5_button_frame_380 ul li.s5_ts_active a:active {
+                            color: #ffffff;
+                        }
+
+                #s5_button_frame.s5_button_frame_380 ul li.s5_ts_active {
+                            background-image: url(/../modules/mod_s5_tabshow/s5_tabshow/s5_tab_show_active.png);
+                    background-size: cover;
+                                    background-color: transparent;
+                        }
+            </style>
+            <script type="text/javascript" src="https://daisiesacademy.com.ng//modules/mod_s5_tabshow/s5_tabshow/iCarousel_jquery.js"></script>
+            <script type="text/javascript">jQuery.noConflict();</script>
+            <script language="javascript" type="text/javascript" >
+
+                function s5_tabshowfunctionld() {
+                    var s5Carousel = new iCarousel("#s5_button_content", {
+                        idPrevious: "#s5_button_previous",
+                        idNext: "",
+                        idToggle: "",
+                        item: {
+                            klass: "s5_button_item",
+                            size: 1400},
+                        animation: {
+                            type: "scroll",
+                            duration: 1000,
+                            amount: 1,
+                            rotate: {
+                                type: 'auto',
+                                interval: 8000,
+                                onMouseOver: "stop"
+                            }
+                             },
+                             display_time: 8,
+                             s5_javascript: 'mootools'
+                    });
+                            jQuery("#thumb0").bind("mouseover", function(event){event.preventDefault();s5Carousel.goTo(0)});		jQuery("#thumb1").bind("mouseover", function(event){event.preventDefault();s5Carousel.goTo(1)});		jQuery("#thumb2").bind("mouseover", function(event){event.preventDefault();s5Carousel.goTo(2)});
+
+                    }
+                function s5_tabshowloadit() {
+                s5_tabshowfunctionld();}
+                jQuery(document).ready(function(){s5_tabshowloadit();});
+            </script>
+
+
+            <div id="s5_button_wrap0" style="width:1400px">
+                <div id="s5_button_wrap1">
+                    <div id="s5_button_wrap2">
+                        <div id="s5_button_frame" class="s5_button_frame_380">
+                            <ul id="s5navfs">
+                                <li id="thumb0" class="s5_ts_not_active" ><a onmouseover="s5_active1()">Tab 1</a></li>
+                                <li id="thumb1" class="s5_ts_not_active" ><a onmouseover="s5_active2()">Tab 2</a></li>
+                                <li id="thumb2" class="s5_ts_not_active" ><a onmouseover="s5_active3()">Tab 3</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="s5_tabshow_left" style="width:1400px">
+                <div id="s5_tabshow_right" style="width:1400px;">
+                    <div id="s5_button" style="width:1398px">
+                        <ul id="s5_button_content">
+                            <li class="s5_button_item" id="s5_button_item1" style="width:1400px;">
+                                <div style="margin-left:0px;padding:0px" class="s5_button_item_inner">
+                                    <div class="moduletable">
+                                        <div class="custom"  >
+                                            <div class="tab_left"><span class="tab_text1">{{ school_info }} is a <strong>welcoming school</strong> with a great sense of <strong>community</strong> </span> <span class="tab_text2">Your child will have the opportunity to <strong>learn more</strong> in a conducive environment.</span></div>
+<!--                                            <div class="tab_right"><a class="outline_button" href="/contact-us">Contact Us Today</a></div>-->
+                                        </div>
+                                    </div>
+                                    <div style="clear:both;height:0px"></div>
+                                </div>
+                            </li>
+
+                            <li class="s5_button_item" id="s5_button_item2" style="width:1400px;">
+                                <div style="margin-left:0px;padding:0px" class="s5_button_item_inner">
+                                    <div class="moduletable">
+                                        <div class="custom"  >
+                                            <div class="tab_left"><span class="tab_text1">Our <strong>dedicated staff</strong> ensure children are welcomed and <strong>grow as learners</strong>.</span> <span class="tab_text2"> Our children are wonderful – they are <strong>polite</strong> and <strong>well-behaved</strong>.</span></div>
+<!--                                            <div class="tab_right"><a class="outline_button" href="/about/staff">Our Curriculum</a></div>-->
+<!--                                        </div>-->
+                                    </div>
+                                    <div style="clear:both;height:0px"></div>
+                                </div>
+                            </li>
+
+                            <li class="s5_button_item" id="s5_button_item3" style="width:1400px;">
+                                <div style="margin-left:0px;padding:0px" class="s5_button_item_inner">
+                                    <div class="moduletable">
+                                        <div class="custom">
+                                            <div class="tab_left"><span class="tab_text1">We are <strong>committed to excellence</strong> in all aspects of students’ school life.</span> <span class="tab_text2">We enable the students entering our school to be <strong>happy and successful</strong> by the time they leave.</span></div>
+<!--                                            <div class="tab_right"><a class="outline_button" href="/about/headteacher">Learn More</a></div>-->
+                                        </div>
+                                    </div>
+                                <div style="clear:both;height:0px"></div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <script type="text/javascript" src="https://daisiesacademy.com.ng//modules/mod_s5_tabshow/s5_tabshow/s5_activejs.js"></script>
+        </div>
+        <div style="clear:both; height:0px"></div>
+    </div>
+</div>
+
+    <div id="s5_login_register_search_wrap">
+        <div id="s5_login_register_search_wrap_inner" class="s5_wrap">
+            <div id="s5_loginreg">
+                <div id="s5_logregtm">
+                    <div id="s5_register" class="s5box_register">
+                        <ul class="s5boxmenu">
+                            <li>Register</li>
+                        </ul>
+                    </div>
+
+                    <div id="s5_login" class="s5box_login">
+                        <ul class="s5boxmenu">
+                            <li>Login</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        <div style="clear:both;height:0px"></div>
+        </div>
+    </div>
+
+<!-- Top Row2 -->
+    <div id="s5_top_row2_area1">
+        <div id="s5_top_row2_area2">
+            <div id="s5_top_row2_area_inner" class="s5_wrap">
+
+                <div id="s5_top_row2_wrap">
+                    <div id="s5_top_row2">
+                        <div id="s5_top_row2_inner">
+                            <div id="s5_pos_top_row2_1" class="s5_float_left" style="width:33.3%">
+                                <div class="module_round_box_outer">
+                                    <div class="module_round_box ">
+                                        <div class="s5_module_box_1">
+                                            <div class="s5_module_box_2">
+                                                <div class="s5_outer ">
+                                                    <div class="custom"  >
+                                                        <div class="top_text_wrap" data-scroll-reveal="enter from the top after 0.5s">
+                                                            <h3><strong>Nursery</strong></h3>
+                                                            <span class="sub_text">Childcare and crechè for under 4 years</span> <br />
+                                                            <div class="top_text_image_wrap"><img src="{% static 'front_cms/images/article-01.jpg' %}" alt="{{school_info|title}} Nursery" /> <span class="top_text_image_text"></span></div>
+                                                            <br /><strong>DISCOVERIES 1 &amp; 2:</strong> Children between ages 2 to 4years. Our class size is 20 pupils, with a teacher and an assistant.<br /> <br /><strong>FOUNDATION:</strong> Here we admit children of ages 4 &amp; 5. We prepare them for the primary using primary books.<br /> <a class="readon" href="{% url 'about' %}"> Read More</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div style="clear:both; height:0px"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="s5_pos_top_row2_2" class="s5_float_left" style="width:33.3%">
+                                <div class="module_round_box_outer">
+                                    <div class="module_round_box ">
+                                        <div class="s5_module_box_1">
+                                            <div class="s5_module_box_2">
+                                                <div class="s5_outer ">
+                                                    <div class="custom"  >
+                                                        <div class="top_text_wrap" data-scroll-reveal="enter from the top after 0.5s">
+                                                            <h3><strong>Primary</strong></h3>
+                                                            <span class="sub_text">Explore our many options for kids</span> <br />
+                                                            <div class="top_text_image_wrap"><img src="{% static 'front_cms/images/article-02.png' %}" alt="{{school_info|title}} Primary" /> <span class="top_text_image_text"></span></div>
+                                                            <br /><strong>YEARS GROUP - 1-5:</strong> Here we admit children within 5years up to 9years. They are exposed to higher learning at each stage using books a year ahead of the class.<br /> <a class="readon" href="{% url 'about' %}"> Read More</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div style="clear:both; height:0px"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="s5_pos_top_row2_3" class="s5_float_left" style="width:33.3%">
+                                <div class="module_round_box_outer">
+                                    <div class="module_round_box ">
+                                        <div class="s5_module_box_1">
+                                            <div class="s5_module_box_2">
+                                                <div class="s5_outer ">
+                                                    <div class="custom"  >
+                                                        <div class="top_text_wrap" data-scroll-reveal="enter from the top after 0.5s">
+                                                            <h3><strong>Junior Secondary</strong></h3>
+                                                            <span class="sub_text">Committed to achieving excellence</span> <br />
+                                                            <div class="top_text_image_wrap"><img src="{% static 'front_cms/images/article-03.jpg' %}" alt="{{school_info|title}} Secondary" /> <span class="top_text_image_text"></span></div>
+                                                            <br />Here we admit only students for Years 7 and 8. We adopt a broad curriculum and prepare students for BECE, Cambridge and NECO.<br /> <a class="readon" href="{% url 'about' %}"> Read More</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div style="clear:both; height:0px"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="clear:both; height:0px"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- End Top Row2 -->
+
+
+
+
+	<!-- Bottom Row1 -->
+    <div id="s5_bottom_row1_area1">
+        <div id="s5_bottom_row1_area2">
+            <div id="s5_bottom_row1_area_inner" class="s5_wrap">
+                <div id="s5_bottom_row1_wrap">
+                    <div id="s5_bottom_row1">
+                        <div id="s5_bottom_row1_inner">
+                            <div id="s5_pos_bottom_row1_1" class="s5_float_left" style="width:100%">
+                                <div class="module_round_box_outer">
+                                    <div class="module_round_box-white_centered">
+                                        <div class="s5_module_box_1">
+                                            <div class="s5_module_box_2">
+                                                <div class="s5_outer-white_centered">
+                                                    <div class="custom-white_centered"  >
+                                                        <div style="padding-top: 20px; padding-bottom: 20px; font-weight: 200; font-size: 1.9em; line-height: 150%; width: 84%; text-align: center; margin: -30px auto -30px auto;" data-scroll-reveal="enter top and move 50px"><em>“{{school_info|title}} is safe, conducive for learning. My children love it here. I’m really proud of the teachers.”</em>&nbsp;– {{school_info|title}}</div></div>
+                                                </div>
+                                                <div style="clear:both; height:0px"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="clear:both; height:0px"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- End Bottom Row1 -->
+
+    <!-- Bottom Row2 -->
+    <!-- End Bottom Row2 -->
+{% endblock %}

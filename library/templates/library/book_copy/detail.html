@@ -1,0 +1,161 @@
+{% extends 'admin_dashboard/layout.html' %}
+{% load static %}
+{% block 'main' %}
+<div class="card">
+    <div class="card-body ">
+        <h5 class="card-title">Actions</h5>
+        <a type="button" title="Delete Book Copy" href="{% url 'book_copy_delete' book_copy.id %}" class="btn btn-outline-danger"><i class="bi bi-trash"></i></a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body pt-3">
+                <ul class="nav nav-tabs nav-tabs-bordered">
+                    <li class="nav-item">
+                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Book Detail</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Borrow History</button>
+                    </li>
+                </ul>
+
+                <div class="tab-content pt-2">
+                    <div class="tab-pane fade show active profile-overview" id="profile-overview">
+                        <h5 class="card-title">Book Details</h5>
+                        <div class="row">
+                            <div class="col-md-7">
+                                <div class="card info-card sales-card">
+                                    <div class="card-body">
+                                        <h5 class="card-title"></h5>
+                                        <div class="d-flex align-items-center">
+                                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                <i class="ri-contacts-book-2-fill"></i>
+                                            </div>
+                                            <div class="ps-3">
+                                                <h6>{{ book_copy.book.name|title }}</h6>
+                                                <span class="text-muted small pt-2 ps-1">Book Name</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-5">
+                                <div class="card info-card sales-card">
+                                    <div class="card-body">
+                                        <h5 class="card-title"></h5>
+                                        <div class="d-flex align-items-center">
+                                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                <i class="ri-code-box-line"></i>
+                                            </div>
+                                            <div class="ps-3">
+                                                <h6>{{ book_copy.copy_id|upper }}</h6>
+                                                <span class="text-muted small pt-2 ps-1">Copy ID</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-xxl-4 col-md-4">
+                                <div class="card info-card sales-card">
+                                    <div class="card-body">
+                                        <h5 class="card-title"></h5>
+                                        <div class="d-flex align-items-center">
+                                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                <i class="bi bi-people"></i>
+                                            </div>
+                                            <div class="ps-3">
+                                                <h6>{% if book_copy.book.author %} {{ book_copy.book.author|title }} {% else %} -------- {% endif %}</h6>
+                                                <span class="text-muted small pt-2 ps-1">Author</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xxl-4 col-md-4">
+                                <div class="card info-card sales-card">
+                                    <div class="card-body">
+                                        <h5 class="card-title"></h5>
+                                        <div class="d-flex align-items-center">
+                                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                <i class="bi bi-people"></i>
+                                            </div>
+                                            <div class="ps-3">
+                                                <h6>{% if book_copy.book.category %} {{ book_copy.book.category|title }} {% else %} -------- {% endif %}</h6>
+                                                <span class="text-muted small pt-2 ps-1">Category</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xxl-4 col-md-4">
+                                <div class="card info-card sales-card">
+                                    <div class="card-body">
+                                        <h5 class="card-title"></h5>
+                                        <div class="d-flex align-items-center">
+                                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                <i class="bi bi-align-top"></i>
+                                            </div>
+                                            <div class="ps-3">
+                                                <h6>{{ book_copy.status|upper }}</h6>
+                                                <span class="text-muted small pt-2 ps-1">Status</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
+                        <div class="row">
+                            <div class="card-body">
+                                <h5 class="card-title">Borrow History</h5>
+                                <table class="table table-borderless datatable">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Student</th>
+                                            <th scope="col">Date Borrowed</th>
+                                            <th scope="col">Date Due</th>
+                                            <th scope="col">Date Returned</th>
+                                            <th scope="col">Status</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if book_copy.borrowed_book.all %}
+                                        {% for copy in book_copy.borrowed_book.all %}
+                                            <tr>
+                                                <th scope="row">{{ forloop.counter }}</th>
+                                                <th><a style="color:black" {% if copy.student %} href="{% url 'student_detail' copy.student.id %}" {% endif %}> {{ copy.student|title }}</a></th>
+                                                <td>{{ copy.date|date }}</td>
+                                                <td>{{ copy.due_date|date }}</td>
+                                                <td>{{ copy.date_returned|date }}</td>
+                                                <td>{{ copy.status|upper }}</td>
+
+                                            </tr>
+                                        {% endfor %}
+                                        {% else %}
+                                            <tr><td colspan="5"><h3 class="text-center">No Student has borrowed this book copy Yet</h3></td></tr>
+                                        {% endif %}
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{%endblock %}

@@ -9,4 +9,8 @@ urlpatterns = [
     path('group/<int:pk>/permission/edit', group_permission_view, name='group_permission'),
     path('group/<int:pk>/delete', GroupDeleteView.as_view(), name='group_delete'),
 
+    path('school-info', SchoolSettingView.as_view(), name='school_info'),
+    path('school-info/create', SchoolSettingCreateView.as_view(), name='school_info_create'),
+    path('school-info/<int:pk>/update', SchoolSettingUpdateView.as_view(), name='school_info_update'),
+
 ]

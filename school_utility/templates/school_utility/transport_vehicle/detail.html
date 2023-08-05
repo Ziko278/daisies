@@ -1,0 +1,237 @@
+{% extends 'admin_dashboard/layout.html' %}
+{% load static %}
+{% block 'main' %}
+<div class="card">
+    <div class="card-body ">
+        <h5 class="card-title">Actions</h5>
+        <button title="Edit Transport Vehicle" type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#edit{{ forloop.counter }}"><i class="bi bi-pencil-square"></i></button>
+        <a type="button" title="Delete Vehicle" href="{% url 'transport_vehicle_delete' transport_vehicle.id %}" class="btn btn-outline-danger"><i class="bi bi-trash"></i></a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body pt-3">
+                <ul class="nav nav-tabs nav-tabs-bordered">
+                    <li class="nav-item">
+                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Route Details</button>
+                    </li>
+
+                </ul>
+
+                <div class="tab-content pt-2">
+                    <div class="tab-pane fade show active profile-overview" id="profile-overview">
+                        <h5 class="card-title">Transport Vehicle Details</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card info-card sales-card">
+                                    <div class="card-body">
+                                        <h5 class="card-title"></h5>
+                                        <div class="d-flex align-items-center">
+                                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                <i class="ri-police-car-fill"></i>
+                                            </div>
+                                            <div class="ps-3">
+                                                <h6>{{ transport_vehicle.vehicle_id|title }}</h6>
+                                                <span class="text-muted small pt-2 ps-1">Vehicle Name/ID</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="card info-card sales-card">
+                                    <div class="card-body">
+                                        <h5 class="card-title"></h5>
+                                        <div class="d-flex align-items-center">
+                                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                <i class="ri-price-tag-2-fill"></i>
+                                            </div>
+                                            <div class="ps-3">
+                                                <h6>{{ transport_vehicle.route }}</h6>
+                                                <span class="text-muted small pt-2 ps-1">Intended Route</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="card info-card sales-card">
+                                    <div class="card-body">
+                                        <h5 class="card-title"></h5>
+                                        <div class="d-flex align-items-center">
+                                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                <i class="bi bi-recycle"></i>
+                                            </div>
+                                            <div class="ps-3">
+                                                <h6>{{ transport_vehicle.plate_number }}</h6>
+                                                <span class="text-muted small pt-2 ps-1">Plate Number</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="card info-card sales-card">
+                                    <div class="card-body">
+                                        <h5 class="card-title"></h5>
+                                        <div class="d-flex align-items-center">
+                                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                <i class="bi bi-telephone-fill"></i>
+                                            </div>
+                                            <div class="ps-3">
+                                                <h6>{{ transport_vehicle.phone_number }}</h6>
+                                                <span class="text-muted small pt-2 ps-1">Phone Number</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="card info-card sales-card">
+                                    <div class="card-body">
+                                        <h5 class="card-title"></h5>
+                                        <div class="d-flex align-items-center">
+                                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                <img class="rounded-circle" style="width:50px" {% if transport_vehicle.driver.image %} src="/media/{{ transport_vehicle.driver.image }}" {% else %} src="{% static 'admin_dashboard/images/default_image.jpg' %}" {% endif %} />
+                                            </div>
+                                            <div class="ps-3">
+                                                <h6>{% if transport_vehicle.driver %} <a href="{% url 'staff_detail' transport_vehicle.driver.id %}">{{ transport_vehicle.driver }} </a> {% else %} ------------ {% endif %}</h6>
+                                                <span class="text-muted small pt-2 ps-1">Driver</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="card info-card sales-card">
+                                    <div class="card-body">
+                                        <h5 class="card-title"></h5>
+                                        <div class="d-flex align-items-center">
+                                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                <img class="rounded-circle" style="width:50px" {% if transport_vehicle.attendant.image %} src="/media/{{ transport_vehicle.attendant.image }}" {% else %} src="{% static 'admin_dashboard/images/default_image.jpg' %}" {% endif %} />
+                                            </div>
+                                            <div class="ps-3">
+                                                <h6>{% if transport_vehicle.attendant %} <a href="{% url 'staff_detail' transport_vehicle.attendant.id %}">{{ transport_vehicle.attendant }} </a> {% else %} ------------ {% endif %}</h6>
+                                                <span class="text-muted small pt-2 ps-1">Vehicle Attendant</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="card info-card sales-card">
+                                    <div class="card-body">
+                                        <h5 class="card-title"></h5>
+                                        <div class="d-flex align-items-center">
+                                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                <i class="ri-police-car-fill"></i>
+                                            </div>
+                                            <div class="ps-3">
+                                                <h6>{{ transport_vehicle.status|title }}</h6>
+                                                <span class="text-muted small pt-2 ps-1">Status</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="card info-card sales-card">
+                                    <div class="card-body">
+                                        <h5 class="card-title"></h5>
+                                        <div class="d-flex align-items-center">
+                                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                <i class="ri-police-car-fill"></i>
+                                            </div>
+                                            <div class="ps-3">
+                                                <h6>{{ transport_vehicle.state|title }}</h6>
+                                                <span class="text-muted small pt-2 ps-1">State</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <p><i>This vehicle was created by {{ transport_vehicle.user|lower }} at {{ transport_vehicle.created_at|date }} {% if transport_vehicle.updated_by %} and updated by {{ transport_vehicle.updated_by|lower }} at {{ transport_vehicle.updated_at|date }} {% endif %}</i></p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form method="POST" action="{% url 'transport_vehicle_edit' transport_vehicle.id %}">
+    {% csrf_token %}
+    <div class="modal fade" id="edit{{ forloop.counter }}" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Transport Vehicle - {{ transport_vehicle|upper }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body row">
+                    <div class="form-floating col-md-6">
+                        {{ form.vehicle_id }}
+                        <input type="hidden" name="updated_by" value="{{ user.id }}" />
+                        <label for="floatingName">Vehicle Name/ID <span style="color:red"><b>*</b></span></label>
+                    </div><br />
+
+                    <div class="form-floating col-md-6">
+                        {{ form.plate_number }}
+                        <br />
+                        <label for="floatingName">Plate Number</label>
+                    </div><br />
+
+                    <div class="form-floating col-md-6">
+                        {{ form.route }}
+                        <br />
+                        <label for="floatingName">Intended Route</label>
+                    </div><br />
+
+                    <div class="form-floating col-md-6">
+                        {{ form.driver }}
+                        <br />
+                        <label for="floatingName">Driver</label>
+                    </div><br />
+
+                    <div class="form-floating col-md-6">
+                        {{ form.attendant }}
+                        <br />
+                        <label for="floatingName">Vehicle Attendant</label>
+                    </div><br />
+
+                    <div class="form-floating col-md-6">
+                        {{ form.phone_number }}
+                        <br />
+                        <label for="floatingName">Associated Phone Number</label>
+                    </div><br />
+
+                    <div class="form-floating col-md-6">
+                        {{ form.status }}
+                        <br />
+                        <label for="floatingName">Status</label>
+                    </div><br />
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+
+{%endblock %}

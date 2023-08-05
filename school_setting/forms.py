@@ -25,3 +25,56 @@ class GroupForm(ModelForm):
 
         }
 
+
+class SchoolSettingCreateForm(ModelForm):
+    """"""
+    def __init__(self, *args, **kwargs):
+        division = False
+        if 'type' in kwargs.keys():
+            division = kwargs.pop('type')
+
+        super().__init__(*args, **kwargs)
+        if division:
+            pass
+        for field in self.fields:
+            if field != 'separate_school_section':
+                self.fields[field].widget.attrs.update({
+                    'class': 'form-control',
+                    'autocomplete': 'off'
+                })
+
+    class Meta:
+        model = SchoolGeneralInfoModel
+        fields = '__all__'
+
+        widgets = {
+            'active_days': CheckboxSelectMultiple(attrs={
+
+            })
+        }
+
+
+class SchoolSettingEditForm(ModelForm):
+    """"""
+    def __init__(self, *args, **kwargs):
+        division = False
+        if 'type' in kwargs.keys():
+            division = kwargs.pop('type')
+
+        super().__init__(*args, **kwargs)
+        if division:
+            pass
+        for field in self.fields:
+            if field != 'separate_school_section':
+                self.fields[field].widget.attrs.update({
+                    'class': 'form-control',
+                    'autocomplete': 'off'
+                })
+
+    class Meta:
+        model = SchoolGeneralInfoModel
+        exclude = ['type', 'user']
+
+        widgets = {
+
+        }

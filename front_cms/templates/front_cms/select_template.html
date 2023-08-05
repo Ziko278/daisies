@@ -1,0 +1,42 @@
+{% extends 'admin_dashboard/layout.html' %}
+{% block 'main' %}
+{% load static %}
+{% load humanize %}
+
+<form action="" method="POST">
+    {% csrf_token %}
+    <div class="col-12">
+        <div class="card recent-sales overflow-auto">
+
+            <div class="card-body">
+                <h5 class="card-title">SELECT USER SITE TEMPLATE</h5>
+                <p class="card-description">Current Template: <b>USER TEMPLATE {% if frontend_setting.template == '1' %} ONE {% elif frontend_setting.template == '2' %} TWO {% endif %}</b></p>
+                {% if form.errors %}
+                    <h5 class="text-danger">{{form.errors}}</h5>
+                {% endif %}
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card info-card sales-card">
+                            <div class="card-body">
+                                <h5 class="card-title">User Template One <input style="float:right" {% if frontend_setting.template == '1' %} checked {% endif %} type="radio" name="template" value="1"></h5>
+                                <div class="d-flex align-items-center">
+
+                                    <img src="{% static 'front_cms/images/frontend_template_1.jpg' %}" style="width:100%;height:500px;" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <a onclick="window.history.back()" class="btn btn-danger" data-bs-dismiss="modal">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+{% endblock %}

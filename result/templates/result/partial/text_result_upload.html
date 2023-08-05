@@ -1,0 +1,27 @@
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title text-center"> <b>{{ category|upper }}</b></h4>
+        {% for field in result_field_list %}
+        {% if field.category == category %}
+
+        <div class="row">
+            <div class="col-md-9">
+                <p style="border:1px solid grey;padding:5px;border-radius:5px;color:black;font-family:cursive">{{field.name|title }}</p>
+            </div>
+
+            <div class="col-md-3">
+                <select name="{{field.name }}" class="form-control">
+                    <option value="">----------------</option>
+                    <option {% for key, value in result_list.result.items %} {% if key|lower == field|lower and value|lower == 'not yet' %} selected {% endif %} {% endfor %}>Not Yet</option>
+                    <option {% for key, value in result_list.result.items %} {% if key|lower == field|lower and value|lower == 'below expectation' %} selected {% endif %} {% endfor %}>Below Expectation</option>
+                    <option {% for key, value in result_list.result.items %} {% if key|lower == field|lower and value|lower == 'as expected' %} selected {% endif %} {% endfor %}>As Expected</option>
+                    <option {% for key, value in result_list.result.items %} {% if key|lower == field|lower and value|lower == 'above expectation' %} selected {% endif %} {% endfor %}>Above Expectation</option>
+                    <option {% for key, value in result_list.result.items %} {% if key|lower == field|lower and value|lower == 'established' %} selected {% endif %} {% endfor %}>Established</option>
+                </select>
+
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>

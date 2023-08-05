@@ -1,0 +1,157 @@
+{% extends 'admin_dashboard/layout.html' %}
+{% load static %}
+{% load humanize %}
+{% block 'main' %}
+{% if form.errors %}
+        <h5 class="text-danger">{{form.errors}}</h5>
+        {% endif %}
+<div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="filter">
+            <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                <li><a class="dropdown-item" href="#"></a>
+                    <a href="{% url 'timetable_create' %}" class="btn btn-primary" style="width:100%">Add TimeTable</a>
+                </li>
+            </ul>
+        </div>
+        <div class="card-body">
+
+            <h4 class="card-title">Select Class</h4>
+            <form>
+                <div class="row">
+                    <div class="col-4">
+                        <select name="student_class" class="form-control" id="id_student_class" required>
+                            <option value="">----------</option>
+                            {% for class in class_list %}
+                            <option value="{{class.id}}" section="<option value=''>----------</option>
+                            {% for section in class.section.all %}
+                            <option value='{{section.id}}'>{{section.name|upper}}</option>
+                            {% endfor %}
+                            ">
+                                {{class.name|upper}}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-4">
+                        <select name="class_section" class="form-control" id="id_class_section" required>
+                            <option value="">----------</option>
+                        </select>
+                    </div>
+
+                    <div class="col-4">
+                        <input style="width:50%;margin-left:25%" type="submit" value="Proceed" class="btn btn-success">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% if student_class and class_section %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body pt-3" style="overflow-x:auto">
+                <h5 class="card-title text-center">TIME TABLE FOR {{ student_class|upper }} {{ class_section|upper }}</h5>
+                <table class="table table-bordered border-primary" style="font-size:14px">
+                    <thead>
+                        {% now "l" as current_day %} {% now "H:i" as current_time %}
+                        {% for day in academic_info.active_days.all %}
+                        <tr>
+                            <td class="text-center {% if day|lower == current_day|lower %} bg-warning border-danger text-white {% endif %}" style="width:150px;vertical-align:middle">{{ day|upper }}</td>
+                            {% for timetable in timetable_list %}
+                            {% if timetable.day == day %}
+                            <td class="text-center {% if current_day|lower == timetable.day|lower and current_time > timetable.start_time_str and current_time < timetable.stop_time_str %} bg-success  {% elif current_day|lower == timetable.day|lower %} bg-warning {% endif %}">{{ timetable.start_time }} - {{ timetable.stop_time }} <br />
+                                <b>{% if timetable.subject %} {{ timetable.subject.code|upper }} {% elif timetable.class_break|upper %} {{ timetable.subject.code|upper }} {% endif %}</b><br />
+                                {% if timetable.subject %} {% if timetable.teacher %} <a style="color:black" href="{% url 'staff_detail' timetable.teacher.id %}"><b>{{ timetable.teacher|upper }}</b></a> {% endif %} {% endif %}<br />
+                                {% if timetable.class_room %} {{ timetable.class_room|title }} {% endif %}<br />
+
+                            </td>
+                            {% endif %}
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                    </thead>
+                    <tbody>
+                        <tr>
+
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body pt-3" style="overflow-x:auto">
+                <h5 class="card-title text-center">SELECT A CLASS TO VIEW TIME TABLE</h5>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if timetable_list %}
+<div class="col-12">
+    <div class="card recent-sales overflow-auto">
+        <div class="card-body">
+            <h5 class="card-title">Time Table List View</h5>
+            {% if form.errors %}
+                <h5 class="text-danger">{{form.errors}}</h5>
+            {% endif %}
+            <table class="table table-borderless datatable">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Subject</th>
+                    <th scope="col">Day</th>
+                    <th scope="col">Time</th>
+                    <th scope="col">Teacher</th>
+                    <th scope="col" class="text-center">Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for timetable in timetable_list %}
+                <tr>
+                    <th scope="row"><a href="#">{{ forloop.counter }}</a></th>
+                    <td title="created by {{ timetable.user|lower }} at {{ timetable.created_at|date }} {% if timetable.updated_by %} and updated by {{ timetable.updated_by|lower }} at {{ timetable.updated_at|date }} {% endif %}">
+                        {% if timetable.subject %} {{ timetable.subject.name|upper }} {% elif timetable.class_break %} {{ timetable.class_break|upper }} {% endif %}
+                    </td>
+                    <td>{{ timetable.day|upper }}</td>
+                    <td>{{ timetable.start_time }} - {{ timetable.stop_time }}</td>
+                    <td>{% if timetable.subject %} {% if timetable.teacher %} <a style="color:black" href="{% url 'staff_detail' timetable.teacher.id %}"><b>{{ timetable.teacher|upper }}</b></a> {% endif %} {% endif %}</td>
+
+                    <td class="text-center">
+                        <a title="Edit Subject" href="{% url 'timetable_edit' timetable.id %}" class="btn btn-warning"><i class="bi bi-pencil-square"></i></a>
+                        <a title="Delete Subject" href="{% url 'timetable_delete' timetable.id %}" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+                    </td>
+                </tr>
+                {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<script src="{% static 'admin_dashboard/scripts/jquery.js' %}"></script>
+<script>
+$(document).ready(function(){
+    $('#id_student_class').change(function(){
+        section = $('option:selected', this).attr('section')
+        $('#id_class_section').html(section)
+    })
+})
+
+</script>
+
+{%endblock %}

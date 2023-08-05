@@ -1,0 +1,23 @@
+{% extends 'admin_dashboard/layout.html' %}
+{% block 'main' %}
+{% load static %}
+<div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Delete TimeTable</h4>
+            <p>Detail: <i><b>{% if timetable.subject %} {{ timetable.subject|upper }} {% elif timetable.class_break %}
+                {{ timetable.class_break|upper }} {% endif %} for {{ timetable.student_class }} {{ timetable.class_section }}
+                on {{ timetable.day|upper }}</b></i></p>
+
+            <p>The Time Table will be permanently deleted.</p>
+
+            <form style="display:inline" method="post">
+                {% csrf_token %}
+
+                <button class="btn btn-success">Proceed</button>
+            </form>
+            <a href="{% url 'timetable_index' %}?student_class={{timetable.student_class.id}}&class_section={{timetable.class_section.id}}" class="btn btn-danger">Cancel</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends 'admin_dashboard/layout.html' %}
+{% load static %}
+{% load humanize %}
+{% block 'main' %}
+<div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Select Record</h4>
+            <form>
+                <div class="row">
+                    <div class="col-3">
+                        <select name="session" required class="form-control">
+                            <option value="">-------------------</option>
+                            {% for session in session_list %}
+                            <option {% if session == current_session %} selected {% endif %} value="{{session.id}}">{{ session }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-3">
+                        <select name="term" required class="form-control">
+                            <option value="">-------------------</option>
+                            <option value="1st term" {% if term == '1st term' %} selected {% endif %}>1st Term</option>
+                            <option value="2nd term" {% if term == '2nd term' %} selected {% endif %}>2nd Term</option>
+                            <option value="3rd term" {% if term == '3rd term' %} selected {% endif %}>3rd Term</option>
+
+                        </select>
+                    </div>
+
+                    <div class="col-3">
+                        <select name="mode" required class="form-control">
+                            <option value="">-------------------</option>
+                            <option value="assign" {% if mode == 'assign' %} selected {% endif %}>Student Assigned</option>
+                            <option value="sale" {% if mode == 'sale' %} selected {% endif %}>Student Sale</option>
+                            <option value="staff" {% if mode == 'staff' %} selected {% endif %}>Staff Collected</option>
+                            <option value="damage" {% if mode == 'damage' %} selected {% endif %}>Stocked Out</option>
+
+                        </select>
+                    </div>
+
+                    <div class="col-3">
+                        <input style="width:50%;margin-left:25%" type="submit" value="Proceed" class="btn btn-success">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="row card">
+    <div class="card-body"  style="overflow-x:auto">
+        <h5 class="card-title">Inventory Stock Out Record for {{ current_session }} Session {{ term|title }}
+            <b>{% if mode == 'assign' %} STUDENT ASSIGNED ITEMS {% endif %}</b>
+            <b>{% if mode == 'staff' %} STAFF COLLECTED ITEMS {% endif %}</b>
+            <b>{% if mode == 'sale' %} STUDENT PURCHASED ITEMS {% endif %}</b>
+            <b>{% if mode == 'damage' %} STOCKED OUT/DAMAGED ITEMS {% endif %}</b>
+        </h5>
+        <table class="table table-borderless datatable" style="font-size:15px">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col" style="min-width:170px">Inventory Item</th>
+                    {% if mode == 'staff' %}
+                    <th scope="col" style="min-width:150px">Staff</th>
+                    {% elif mode == 'damage' %}
+                    {% else %}
+                    <th scope="col" style="min-width:150px">Student</th>
+                    {% endif %}
+                    <th scope="col" style="min-width:80px">Qty</th>
+                    <th scope="col" style="min-width:120px">Date</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if inventory_stock_out_list %}
+                {% for stock in inventory_stock_out_list %}
+                    <tr>
+                        <th scope="col">{{forloop.counter}}</th>
+                        <td><a style="color:black" href="{% url 'inventory_item_detail' stock.item.id %}">{{stock.item|title}} </a></td>
+                        {% if mode == 'staff' %}
+                        <td><a style="color:black" {% if stock.staff %} href="{% url 'staff_detail' stock.staff.id %}" {% endif %}> {{stock.staff|title}}</a></td>
+                        {% elif mode == 'damage' %}
+                        {% else %}
+                        <td><a style="color:black" {% if stock.student %} href="{% url 'student_detail' stock.student.id %}" {% endif %}> {{stock.student|title}}</a></td>
+                        {% endif %}
+                        <td>{{stock.quantity}}</td>
+                        <td>{{stock.date|date}}</td>
+                        <td><a title="View Details" href="{% url 'inventory_stock_out_detail' stock.id %}" class="btn btn-primary"><i class="bi bi-eye"></i> </a></td>
+
+                    </tr>
+                {% endfor %}
+                {% else %}
+                    <tr><td colspan="9"><h3 class="text-center">No Stock Out Record</h3></td></tr>
+                {% endif %}
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+{%endblock %}

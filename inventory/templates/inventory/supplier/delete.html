@@ -1,0 +1,21 @@
+{% extends 'admin_dashboard/layout.html' %}
+{% block 'main' %}
+{% load static %}
+<div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Delete Inventory Supplier</h4>
+            <p>Class: <i>{{inventory_supplier.name|upper }}</i></p>
+
+            <p>The Supplier will be permanently deleted.</p>
+            <p>Goods supplied by this supplier might be lost</p>
+            <form style="display:inline" method="post">
+                {% csrf_token %}
+
+                <button class="btn btn-success">Proceed</button>
+            </form>
+            <a class="btn btn-danger" href="{% url 'inventory_supplier_detail' inventory_supplier.id %}"> Cancel</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

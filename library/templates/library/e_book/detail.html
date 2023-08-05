@@ -1,0 +1,44 @@
+{% extends 'admin_dashboard/layout.html' %}
+{% load static %}
+{% block 'main' %}
+<div class="card">
+    <div class="card-body ">
+        <h5 class="card-title">Actions</h5>
+        <a title="Edit E-Book" href="{% url 'e_book_edit' e_book.id %}" class="btn btn-warning"><i class="bi bi-pencil-square"></i></a>
+        <a type="button" title="Delete E-Book" href="{% url 'e_book_delete' e_book.id %}" class="btn btn-outline-danger"><i class="bi bi-trash"></i></a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body pt-3">
+                <ul class="nav nav-tabs nav-tabs-bordered">
+                    <li class="nav-item">
+                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">E-Book Detail</button>
+                    </li>
+                </ul>
+
+                <div class="tab-content pt-2">
+                    <div class="tab-pane fade show active profile-overview" id="profile-overview">
+                        <h5 class="card-title">E-Book Details</h5>
+                        <div class="row">
+                            <div style="padding:20px">
+                                {{ e_book_content|safe }}
+                            </div>
+
+                            {% if book.description %} <p>Description: <i> {{ book.description }} {% endif %}</i></p>
+                            <p><i>This book was created by {{ book.user|lower }} at {{ book.created_at|date }} {% if book.updated_by %} and updated by {{ book.updated_by|lower }} at {{ book.updated_at|date }} {% endif %}</i></p>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{%endblock %}

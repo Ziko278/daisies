@@ -1,0 +1,70 @@
+{% extends 'admin_dashboard/layout.html' %}
+{% block 'main' %}
+{% load static %}
+
+<div class="col-12">
+    <div class="card recent-sales overflow-auto">
+
+        <div class="card-body">
+            {% if form.errors %}
+                <h5 class="text-danger">{{form.errors}}</h5>
+            {% endif %}
+            <form method="POST" action="" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="" id="verticalycentered" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="card-title">Edit Book - {{ pdf_book }}</h5>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="form-floating col-6">
+                                        {{ form.name }} <br />
+                                        <input type="hidden" name="updated_by" value="{{ user.id }}" />
+                                        <label for="floatingName">Book Title <span style="color:red"><b>*</b></span></label>
+                                    </div><br />
+
+                                    <div class="form-floating col-6">
+                                        {{ form.category }}<br />
+                                        <label for="floatingName">Category <span style="color:red"><b>*</b></span></label>
+                                    </div>
+
+                                    <div class="form-floating col-6">
+                                        {{ form.author }}<br />
+                                        <label for="floatingName">Author</label>
+                                    </div>
+
+                                    <div class="form-floating col-6">
+                                        {{ form.pdf_file }}<br />
+                                        <label for="floatingName">PDF <span style="color:red"><b>*</b></span></label>
+                                    </div>
+
+                                    <div class="form-floating col-6">
+                                        {{ form.cover_page }}<br />
+                                        <label for="floatingName">Cover Page</label>
+                                    </div>
+
+                                    <div class="form-floating col-6">
+                                        {{ form.description }}<br />
+                                        <label for="floatingName">Description</label>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            <div class="modal-footer">
+                                <a href="{% url 'pdf_book_index' %}" class="btn btn-danger">Cancel</a>
+                                <button type="submit" class="btn btn-primary">Save changes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

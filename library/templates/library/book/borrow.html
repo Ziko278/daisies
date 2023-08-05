@@ -1,0 +1,30 @@
+{% extends 'admin_dashboard/layout.html' %}
+{% block 'main' %}
+{% load static %}
+<div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Borrow Book</h4>
+            <form action="" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="confirm" />
+                <div class="row">
+                    <div class="form-floating col-6">
+                        <input type="text" name="book_id" class="form-control" required>
+                        <label for="floatingName">Book Unique ID <span style="color:red"><b>*</b></span></label><br />
+                    </div>
+
+                    <div class="form-floating col-6">
+                        <input type="text" name="student_id" class="form-control" required>
+                        <label for="floatingName">Student ID <span style="color:red"><b>*</b></span></label><br />
+                    </div>
+
+                    <div class="form-floating col-12">
+                        <input type="submit" class="btn btn-success" value="Proceed">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

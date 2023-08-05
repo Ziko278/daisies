@@ -1,0 +1,131 @@
+{% extends 'admin_dashboard/layout.html' %}
+{% load static %}
+{% block 'main' %}
+<form action="" class="row g-3 needs-validation" novalidate method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body pt-3">
+
+                <input type="hidden" name="type" value="{{ user.profile.type }}" />
+                <input type="hidden" name="user" value="{{ user.id }}" />
+                <div class="tab-content pt-2">
+                    <div class="tab-pane fade show active profile-overview" id="profile-overview">
+                        <h5 class="card-title">Edit TimeTable</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="hidden" name="type" value="{{ user.profile.type }}" />
+                                    <input type="hidden" name="user" value="{{ user.id }}" />
+                                    <select name="student_class" class="form-control" id="id_student_class" required>
+                                        {% for class in class_list %}
+                                        <option value="{{class.id}}" {% if class == timetable.student_class %} selected {% endif %} section="<option value=''>----------</option>
+                                        {% for section in class.section.all %}
+                                        <option value='{{section.id}}'>{{section.name|upper}}</option>
+                                        {% endfor %}
+                                        ">
+                                            {{class.name|upper}}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                    <label for="floatingName">Class <span style="color:red"><b>*</b></span></label>
+                                </div><br />
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <select name="class_section" class="form-control" id="id_class_section" required>
+                                        {% for class in class_list %}
+                                        {% if class == timetable.student_class %}
+                                            {% for section in class.section.all %}
+                                                <option value="{{section.id}}" {% if section.id == timetable.class_section %} selected {% endif %}>{{ section|upper }}</option>
+                                            {% endfor %}
+                                        {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                    <label for="floatingName">Class Section <span style="color:red"><b>*</b></span></label>
+                                </div><br />
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    {{ form.subject }}
+                                    <label for="floatingName">Subject <span style="color:red"><b>*</b></span></label>
+                                </div><br />
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    {{ form.class_break }}
+                                    <label for="floatingName">Break Time <span style="color:red"><b>*</b></span></label>
+                                </div><br />
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <select name="day" class="form-control"  required>
+                                        <option value="">----------</option>
+                                        {% for day in academic_info.active_days.all %}
+                                        <option value="{{day.id}}" {% if timetable.day == day %} selected {% endif %}>{{day|upper}}</option>
+                                        {% endfor %}
+                                    </select>
+
+                                    <label for="floatingName">Day <span style="color:red"><b>*</b></span></label>
+                                </div><br />
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    {{ form.start_time }}
+                                    <label for="floatingName">From <span style="color:red"><b>*</b></span></label>
+                                </div><br />
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    {{ form.stop_time }}
+                                    <label for="floatingName">To <span style="color:red"><b>*</b></span></label>
+                                </div><br />
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    {{ form.teacher }}
+                                    <label for="floatingName">Teacher </label>
+                                </div><br />
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    {{ form.class_room }}
+                                    <label for="floatingName">Class Room </label>
+                                </div><br />
+                            </div>
+
+                            <div class="col-md-6">
+                                <a href="{% url 'timetable_index' %}?student_class={{timetable.student_class.id}}&class_section={{timetable.class_section.id}}" class="btn btn-danger">Cancel</a>
+                                <button type="submit" class="btn btn-primary">Save</button>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</form>
+
+<script src="{% static 'admin_dashboard/scripts/jquery.js' %}"></script>
+<script>
+$(document).ready(function(){
+    $('#id_student_class').change(function(){
+        section = $('option:selected', this).attr('section')
+        $('#id_class_section').html(section)
+    })
+})
+
+</script>
+{%endblock %}

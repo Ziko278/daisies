@@ -1,10 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.db.models import Sum
-import requests, json
 from datetime import date, datetime, timedelta
 from num2words import num2words
-
 from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.http import HttpResponse
@@ -130,3 +128,76 @@ class GroupDeleteView(DeleteView):
         return context
 
 
+class SchoolSettingView(LoginRequiredMixin, TemplateView):
+    template_name = 'school_setting/setting/index.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        school_info = SchoolGeneralInfoModel.objects.filter(type=self.request.user.profile.type).first()
+        if not school_info:
+            school_info = SchoolGeneralInfoModel.objects.first()
+
+        form_kwargs = {}
+        if school_info.separate_school_section:
+            school_info = SchoolGeneralInfoModel.objects.filter(type=self.request.user.profile.type).first()
+            form_kwargs['type'] = self.request.user.profile.type
+        else:
+            school_info = SchoolGeneralInfoModel.objects.first()
+
+        if not school_info:
+            form = SchoolSettingCreateForm(**form_kwargs)
+            is_school_info = False
+        else:
+            form = SchoolSettingEditForm(instance=school_info, **form_kwargs)
+            is_school_info = True
+        context['form'] = form
+        context['is_school_info'] = is_school_info
+        context['school_info'] = school_info
+        return context
+
+
+class SchoolSettingCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+    model = SchoolGeneralInfoModel
+    form_class = SchoolSettingCreateForm
+    template_name = 'school_setting/setting/index.html'
+    success_message = 'School Setting Info updated Successfully'
+
+    def get_success_url(self):
+        return reverse('school_info')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super(SchoolSettingCreateView, self).get_form_kwargs()
+        school_setting = SchoolGeneralInfoModel.objects.first()
+        if school_setting.separate_school_section:
+            kwargs.update({'type': self.request.user.profile.type})
+        kwargs.update({'type': self.request.user.profile.type})
+        return kwargs
+
+
+class SchoolSettingUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    model = SchoolGeneralInfoModel
+    form_class = SchoolSettingEditForm
+    template_name = 'school_setting/setting/index.html'
+    success_message = 'School Setting Info updated Successfully'
+
+    def get_success_url(self):
+        return reverse('school_info')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        school_setting = SchoolGeneralInfoModel.objects.first()
+
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super(SchoolSettingUpdateView, self).get_form_kwargs()
+        school_setting = SchoolGeneralInfoModel.objects.first()
+        if school_setting.separate_school_section:
+            kwargs.update({'type': self.request.user.profile.type})
+        kwargs.update({'type': self.request.user.profile.type})
+        return kwargs

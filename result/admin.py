@@ -1,3 +1,5 @@
 from django.contrib import admin
+from result.models import ResultSettingModel
 
-# Register your models here.
+
+admin.site.register(ResultSettingModel)

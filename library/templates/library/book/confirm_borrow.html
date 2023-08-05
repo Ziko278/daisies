@@ -1,0 +1,59 @@
+{% extends 'admin_dashboard/layout.html' %}
+{% block 'main' %}
+{% load static %}
+<div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Confirm Book Borrow</h4>
+            <form action="" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="confirm" />
+                <div class="row">
+                    <div class="form-floating col-6">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <image {% if student.image %} src="/media/{{ student.image }}" {% else %} src="{% static 'admin_dashboard/images/default_image.jpg' %}" {% endif %} style="width:100px;height:100px;border-radius:5px;" />
+                                <p style="margin-top:5px;"><span class="text-center {% if student.status|lower == 'active' %} text-success {% else %} text-danger {% endif %} "> {{student.status|upper}} </span> </p>
+                            </div>
+                            <div class="col-md-8">
+                                <p>{{ student.surname|title }} {% if student.middle_name %} {{ student.middle_name|title }} {% endif %} {{ student.last_name|title }}</p>
+                                <p>{% if student.registration_number %} {{student.registration_number|upper}} {% else %} NO REGISTRATION NUMBER {% endif %}</p>
+                                <p>{{student.student_class|upper}} {{student.class_section|upper}} </p>
+                                <p>{{student.gender|title}} </p>
+                             </div>
+                        </div>
+                    </div>
+
+                    <div class="form-floating col-6">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <image {% if copy.book.cover_page %} src="/media/{{ copy.book.cover_page }}" {% else %} src="{% static 'admin_dashboard/images/book_cover.jpg' %}" {% endif %} style="width:100px;height:100px;border-radius:5px;" />
+                                <p style="margin-top:5px;"><span class="text-center {% if student.status|lower == 'active' %} text-success {% else %} text-danger {% endif %} "> {{copy.status|upper}} </span> </p>
+                            </div>
+                            <div class="col-md-8">
+                                <p>{{ copy.book|title }}</p>
+                                <p>{{ copy.copy_id|upper }}</p>
+
+                             </div>
+                        </div>
+                    </div>
+
+                    <div class="form-floating col-12">
+                        <p>Your are about to borrow <b>{{ copy }}</b> to <b>{{ student|title }}</b></p>
+                        {% if student.borrowed_book > 0 %}
+                        <p>{% if student.gender|lower == 'male' %} He {% else %} She {% endif %} has {{ student.borrowed_book }} borrowed book{{ student.borrowed_book|pluralize }} in {% if student.gender|lower == 'male' %} his {% else %} her {% endif %} possession</p>
+                        {% endif %}
+                        <form action="" method="POST">
+                            <input type="hidden" name="action" value="confirmed">
+                            <input type="hidden" name="student_id" value="{{ student.registration_number }}">
+                            <input type="hidden" name="book_id" value="{{ copy.copy_id }}">
+                        </form>
+                        <input type="submit" class="btn btn-success" value="Proceed">
+                        <a href="{% url 'book_borrow' %}" class="btn btn-danger">Cancel</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

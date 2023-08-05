@@ -1,0 +1,194 @@
+{% extends 'admin_dashboard/layout.html' %}
+{% load static %}
+{% block 'main' %}
+<div class="card">
+    <div class="card-body ">
+        <h5 class="card-title">Actions</h5>
+        <a title="Edit Book" href="{% url 'book_edit' book.id %}" class="btn btn-warning"><i class="bi bi-pencil-square"></i></a>
+        <a type="button" title="Delete Book" href="{% url 'book_delete' book.id %}" class="btn btn-outline-danger"><i class="bi bi-trash"></i></a>
+        <button title="Generate Copies" type="button" class="btn btn-primary" data-bs-toggle="modal" style="" data-bs-target="#verticalycentered"><i class="bi bi-patch-exclamation-fill"></i></button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body pt-3">
+                <ul class="nav nav-tabs nav-tabs-bordered">
+                    <li class="nav-item">
+                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Book Detail</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Book Copies</button>
+                    </li>
+                </ul>
+
+                <div class="tab-content pt-2">
+                    <div class="tab-pane fade show active profile-overview" id="profile-overview">
+                        <h5 class="card-title">Book Details</h5>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="card info-card sales-card">
+                                    <div class="card-body">
+                                        <h5 class="card-title"></h5>
+                                        <div class="d-flex align-items-center">
+                                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                <i class="ri-contacts-book-2-fill"></i>
+                                            </div>
+                                            <div class="ps-3">
+                                                <h6>{{ book.name|title }}</h6>
+                                                <span class="text-muted small pt-2 ps-1">Book Name</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xxl-4 col-md-4">
+                                <div class="card info-card sales-card">
+                                    <div class="card-body">
+                                        <h5 class="card-title"></h5>
+                                        <div class="d-flex align-items-center">
+                                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                <i class="ri-code-box-line"></i>
+                                            </div>
+                                            <div class="ps-3">
+                                                <h6>{{ book.category|title }}</h6>
+                                                <span class="text-muted small pt-2 ps-1">Category</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-xxl-4 col-md-4">
+                                <div class="card info-card sales-card">
+                                    <div class="card-body">
+                                        <h5 class="card-title"></h5>
+                                        <div class="d-flex align-items-center">
+                                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                <i class="bi bi-people"></i>
+                                            </div>
+                                            <div class="ps-3">
+                                                <h6>{% if book.author %} {{ book.author|title }} {% else %} -------- {% endif %}</h6>
+                                                <span class="text-muted small pt-2 ps-1">Author</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xxl-4 col-md-4">
+                                <div class="card info-card sales-card">
+                                    <div class="card-body">
+                                        <h5 class="card-title"></h5>
+                                        <div class="d-flex align-items-center">
+                                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                <i class="bi bi-align-top"></i>
+                                            </div>
+                                            <div class="ps-3">
+                                                <h6>{{ book.total_copies }}</h6>
+                                                <span class="text-muted small pt-2 ps-1">Total Copies</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xxl-4 col-md-4">
+                                <div class="card info-card sales-card">
+                                    <div class="card-body">
+                                        <h5 class="card-title"></h5>
+                                        <div class="d-flex align-items-center">
+                                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                <i class="bi bi-align-middle"></i>
+                                            </div>
+                                            <div class="ps-3">
+                                                <h6>{{ book.available_copies }}</h6>
+                                                <span class="text-muted small pt-2 ps-1">Available Copies</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% if book.description %} <p>Description: <i> {{ book.description }} {% endif %}</i></p>
+                            <p><i>This book was created by {{ book.user|lower }} at {{ book.created_at|date }} {% if book.updated_by %} and updated by {{ book.updated_by|lower }} at {{ book.updated_at|date }} {% endif %}</i></p>
+
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
+                        <div class="row">
+                            <div class="card-body">
+                                <h5 class="card-title">Unique Copies of {{ book.name|upper }}</h5>
+                                <table class="table table-borderless datatable">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">copy ID</th>
+                                            <th scope="col">Status</th>
+                                            <th scope="col">Borrower</th>
+                                            <th scope="col" class="text-center">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if book.copies.all %}
+                                        {% for copy in book.copies.all %}
+                                            <tr>
+                                                <th scope="row">{{ forloop.counter }}</th>
+                                                <td>{{ copy.copy_id|upper }}</td>
+                                                <td>{{ copy.status|upper }}</td>
+                                                <td>{% if copy.borrower %} <a style="color:black" href="{% url 'student_detail' copy.borrower.id %}"> {{ copy.borrower|title }} </a> {% endif %}</td>
+                                                <td style="float:right">
+                                                    <a title="View Details" class="btn btn-primary" href="{% url 'book_copy_detail' copy.id %}"><i class="bi bi-eye"></i></a>
+                                                    <a title="Delete Book copy" class="btn btn-danger" href="{% url 'book_copy_delete' copy.id %}"><i class="bi bi-trash"></i></a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                        {% else %}
+                                            <tr><td colspan="6"><h3 class="text-center">No Available Book Copy</h3></td></tr>
+                                        {% endif %}
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<form method="POST" action="{% url 'book_copy_create' book.id %}" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="modal fade" id="verticalycentered" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Generate Book Copies for {{book|title}}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="form-floating col-6">
+                            <input type="number" name="copies" class="form-control" min="1" max="100" required>
+                            <label for="floatingName">No of Copies <span style="color:red"><b>*</b></span></label>
+                        </div><br />
+
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Proceed</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+{%endblock %}

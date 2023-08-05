@@ -1,0 +1,144 @@
+{% extends 'admin_dashboard/layout.html' %}
+{% block 'main' %}
+{% load static %}
+
+<div class="col-12">
+    <div class="card recent-sales overflow-auto">
+        <div class="filter">
+            <a title="Add Route" class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                <li class="dropdown-header text-start">
+                    <h6>Action</h6>
+                </li>
+
+                <li><a class="dropdown-item" href="#">
+                    <button title="Add Route" style="width:100%" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#verticalycentered">Add Route</button>
+                </a></li>
+            </ul>
+        </div>
+
+        <div class="card-body">
+            <h5 class="card-title">List of Transport Routes
+                {% if school_info.separate_school_section and school_info.school_type == 'mix' %}
+                    {% if user.profile.type == 'pri' %}
+                        in Primary Division of the School
+                    {% elif user.profile.type == 'sec' %}
+                        in Secondary Division of the School
+                    {% elif user.profile.type == 'mix' %}
+                        in the School
+                    {% endif %}
+                {% endif %}
+            </h5>
+            {% if form.errors %}
+                <h5 class="text-danger">{{form.errors}}</h5>
+            {% endif %}
+            <table class="table table-borderless datatable">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Route Name</th>
+                    <th scope="col">Extra Info</th>
+                    {% if school_info.school_type|lower == 'mix' and not school_info.separate_school_section %} <th scope="col">Category</th> {% endif %}
+                    <th scope="col" class="text-center">Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% if transport_route_list %}
+                {% for route in transport_route_list %}
+                <tr>
+                    <th scope="row"><a href="#">{{ forloop.counter }}</a></th>
+                    <td  title="created by {{ route.user|lower }} at {{ route.created_at|date }} {% if route.updated_by %} and updated by {{ route.updated_by|lower }} at {{ route.updated_at|date }} {% endif %}">{{ route.name|upper }}</td>
+                    <td>{{ route.description }}</td>
+
+                    {% if school_info.school_type|lower == 'mix' and not school_info.separate_school_section %}
+                    <td>{% if route.type|lower == 'pri' %} PRIMARY {% elif route.type|lower == 'sec' %} SECONDARY  {% endif %} </td>
+                    {% endif %}
+                    <td class="text-center">
+                        <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#edit{{ forloop.counter }}"><i class="bi bi-pencil-square"></i></button>
+                        <a href="{% url 'transport_route_detail' route.id %}" class="btn btn-primary"><i class="bi bi-eye"></i></a>
+                        <a href="{% url 'transport_route_delete' route.id %}" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                    <tr><td colspan="8"><h3 class="text-center">No Transport Route Added Yet</h3></td></tr>
+                {% endif %}
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<form method="POST" action="{% url 'transport_route_create' %}">
+    {% csrf_token %}
+    <input type="hidden" name="type" value="pri">
+    <div class="modal fade" id="verticalycentered" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Transport Route</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body row">
+                    <div class="form-floating col-md-6">
+                        {{ form.name }}
+                        <input type="hidden" name="type" value="{{ user.profile.type }}" />
+                        <input type="hidden" name="user" value="{{ user.id }}" />
+                        <label for="floatingName">Transport Route <span style="color:red"><b>*</b></span></label>
+                    </div><br />
+
+                    <div class="form-floating col-md-6">
+                        {{ form.description }}
+                        <br />
+                        <label for="floatingName">Description</label>
+                    </div><br />
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+{% for route in transport_route_list %}
+<form method="POST" action="{% url 'transport_route_edit' route.id %}">
+
+    {% csrf_token %}
+    <div class="modal fade" id="edit{{ forloop.counter }}" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Transport Route - {{ route|upper }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body row">
+                    <input type="hidden" name="updated_by" value="{{ user.id }}" />
+                    <div class="form-floating col-md-6">
+                        <input type="text" name="name" class="form-control" value="{{ route.name }}" required>
+                        <label for="floatingName">Route Name <span style="color:red"><b>*</b></span></label>
+                    </div><br />
+
+                    <div class="form-floating col-md-6">
+                        <textarea class="form-control" name="description">{{ route.description }}</textarea>
+                        <label for="floatingName">Description </label>
+                    </div><br />
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endfor %}
+
+
+{% endblock %}

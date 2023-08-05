@@ -36,17 +36,31 @@
   * Author: BootstrapMade.com
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
+  <style>
+    @media print {
+      .non-printable {
+        display: none !important;
+      }
+    }
+  </style>
 </head>
 
 <body>
+<style>
+  .nav-link {
+    height:35px
+  }
 
+
+
+</style>
   <!-- ======= Header ======= -->
-  <header id="header" class="header fixed-top d-flex align-items-center">
+  <header id="header" class="header non-printable fixed-top d-flex align-items-center">
 
     <div class="d-flex align-items-center justify-content-between">
       <a href="{% url 'admin_dashboard' %}" class="logo d-flex align-items-center">
-        <img src="/media/{{ site_info.logo }}" alt="" style="width:100px;height:100px">
-        <span class="d-none d-lg-block">BGL</span>
+<!--        <img src="/media/{{ site_info.logo }}" alt="" style="width:100px;height:100px">-->
+        <span class="d-none d-lg-block">{{ school_info|upper }}</span>
       </a>
       <i class="bi bi-list toggle-sidebar-btn"></i>
     </div><!-- End Logo -->
@@ -59,31 +73,40 @@
         <li class="nav-item dropdown pe-3">
 
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-            <img src="{% static 'admin_dashboard/images/default_image.jpg' %}" alt="Profile" class="rounded-circle">
+            {% if user.is_superuser %}
+                <img src="/media/{{ school_info.logo }}" alt="Profile" class="rounded-circle">
+            {% else %}
+                {% if user.profile.staff.image %}
+                    <img src="/media/{{user.profile.staff.image}}" alt="Profile" class="rounded-circle">
+                {% else %}
+                    <img src="{% static 'admin_dashboard/images/default_image.jpg' %}" alt="Profile" class="rounded-circle">
+                {% endif %}
+            {% endif %}
 
-          </a><!-- End Profile Iamge Icon -->
+          </a><!-- End Profile Image Icon -->
 
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
             <li class="dropdown-header">
-              <h6 class="card-title">{{ user.username|lower}}</h6>
+              <h6 class="card-title">{{ user.username|upper}}</h6>
+              <span>{% if user.is_superuser %} SuperAdmin {% else %} {{ user.profile.staff|title }} {% endif %}</span>
             </li>
             <li>
               <hr class="dropdown-divider">
             </li>
-            {% if not user.is_superuser %}
+
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="% url 'driver_profile' %}">
+              <a class="dropdown-item d-flex align-items-center" href="{% url 'user_profile' %}">
                 <i class="bi bi-person"></i>
                 <span>My Profile</span>
               </a>
             </li>
-            {% endif %}
+
             <li>
               <hr class="dropdown-divider">
             </li>
 
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="">
+              <a class="dropdown-item d-flex align-items-center" href="{% url 'change_password' %}">
                 <i class="bi bi-gear"></i>
                 <span>Change Password</span>
               </a>
@@ -97,7 +120,7 @@
             </li>
 
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="% url 'admin_logout' %}">
+              <a class="dropdown-item d-flex align-items-center" href="{% url 'logout' %}">
                 <i class="bi bi-box-arrow-right"></i>
                 <span>Sign Out</span>
               </a>
@@ -112,7 +135,7 @@
   </header><!-- End Header -->
 
   <!-- ======= Sidebar ======= -->
-  <aside id="sidebar" class="sidebar">
+  <aside id="sidebar" class="sidebar non-printable" style="">
 
     <ul class="sidebar-nav" id="sidebar-nav">
 
@@ -124,32 +147,646 @@
       </li>
 
       <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#tables-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-gear-fill"></i><span>SETTING</span><i class="bi bi-chevron-down ms-auto"></i>
+        <a class="nav-link collapsed" data-bs-target="#stud" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-journal-bookmark-fill"></i><span>ADMISSION</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
-        <ul id="tables-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <ul id="stud" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
-            <a href="{% url 'group_index' %}">
-              <i class="bi bi-circle"></i><span>Roles/Permissions</span>
+            <a href="{% url 'student_check_parent' %}">
+              <i class="bi bi-circle"></i><span>Register Student</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'student_index' %}">
+              <i class="bi bi-circle"></i><span>Active Students</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'student_alumni_index' %}">
+              <i class="bi bi-circle"></i><span>Alumni</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'parent_index' %}">
+              <i class="bi bi-circle"></i><span>Parents</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'student_info' %}">
+              <i class="bi bi-circle"></i><span>Admission Setting</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#sb_att" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-alarm"></i><span>ATTENDANCE</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="sb_att" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{% url 'take_daily_attendance' %}">
+              <i class="bi bi-circle"></i><span>School Attendance</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'class_attendance_select_class' %}">
+              <i class="bi bi-circle"></i><span>Take Class Attendance</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'check_class_attendance_select_class' %}">
+              <i class="bi bi-circle"></i><span>Check Class Attendance</span>
+            </a>
+          </li>
+
+        </ul>
+      </li>
+
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#acad" data-bs-toggle="collapse" href="#">
+          <i class="ri-book-mark-fill"></i><span>ACADEMICS</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="acad" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{% url 'lesson_note_index' %}">
+              <i class="bi bi-circle"></i><span>Lesson Note</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'lesson_document_index' %}">
+              <i class="bi bi-circle"></i><span>Lesson Document</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'subject_index' %}">
+              <i class="bi bi-circle"></i><span>Subjects</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'timetable_index' %}">
+              <i class="bi bi-circle"></i><span>Timetable</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'class_index' %}">
+              <i class="bi bi-circle"></i><span>Classes</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'class_section_index' %}">
+              <i class="bi bi-circle"></i><span>Class Sections</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'academic_info' %}">
+              <i class="bi bi-circle"></i><span>Academic Settings</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'proceed_to_next_term' %}">
+              <i class="bi bi-circle"></i><span>Proceed to Next {% if academic_info.term == '3rd term' %} Session {% else %} Term {% endif %}</span>
+            </a>
+          </li>
+
+        </ul>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#fee" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-cash-stack"></i><span>FEE COLLECTION</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="fee" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{% url 'fee_select_student' %}">
+              <i class="bi bi-circle"></i><span>Collect Fee</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'fee_payment_index' %}?session={{academic_info.session.id}}&term={{academic_info.term}}">
+              <i class="bi bi-circle"></i><span>Collected Fees</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'fee_index' %}">
+              <i class="bi bi-circle"></i><span>Fees</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'fee_group_index' %}">
+              <i class="bi bi-circle"></i><span>Fee Groups</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'fee_master_index' %}">
+              <i class="bi bi-circle"></i><span>Fee Master</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'fee_discount_index' %}">
+              <i class="bi bi-circle"></i><span>Fee Discounts</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'fee_discount_group_index' %}">
+              <i class="bi bi-circle"></i><span>Fee Discount Groups</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'fee_penalty_index' %}">
+              <i class="bi bi-circle"></i><span>Fee Penalties</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'online_payment_index' %}">
+              <i class="bi bi-circle"></i><span>Payment Methods</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'fee_dashboard' %}?session={{academic_info.session.id}}&term={{academic_info.term}}">
+              <i class="bi bi-circle"></i><span>Fee Dashboard</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'finance_info' %}">
+              <i class="bi bi-circle"></i><span>Finance Settings</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#nav-fin" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-cash-stack"></i><span>FINANCE</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="nav-fin" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{% url 'income_index' %}?session={{academic_info.session.id}}&term={{academic_info.term}}">
+              <i class="bi bi-circle"></i><span>Incomes</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'expense_index' %}?session={{academic_info.session.id}}&term={{academic_info.term}}">
+              <i class="bi bi-circle"></i><span>Expense</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'expense_category_index' %}">
+              <i class="bi bi-circle"></i><span>Expense Categories</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'expense_type_index' %}">
+              <i class="bi bi-circle"></i><span>Expense Types</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'income_category_index' %}">
+              <i class="bi bi-circle"></i><span>Income Categories</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'income_source_index' %}">
+              <i class="bi bi-circle"></i><span>Income Sources</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'finance_dashboard' %}?session={{academic_info.session.id}}&term={{academic_info.term}}">
+              <i class="bi bi-circle"></i><span>Finance Dashboard</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'finance_info' %}">
+              <i class="bi bi-circle"></i><span>Finance Settings</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#result" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-bar-chart"></i><span>RESULT</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="result" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{% url 'result_create' %}">
+              <i class="bi bi-circle"></i><span>Result Upload</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'result_check' %}">
+              <i class="bi bi-circle"></i><span>Check Result</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'uploaded_result' %}">
+              <i class="bi bi-circle"></i><span>Uploaded Result</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'teacher_comment_index' %}">
+              <i class="bi bi-circle"></i><span>Teacher Comments</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'head_teacher_comment_index' %}">
+              <i class="bi bi-circle"></i><span>Head Teacher Comment</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'result_grade_index' %}">
+              <i class="bi bi-circle"></i><span>Result Grades</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'result_field_index' %}">
+              <i class="bi bi-circle"></i><span>Result Fields</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'result_behaviour_category_index' %}">
+              <i class="bi bi-circle"></i><span>Behaviour Category</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'result_behaviour_index' %}">
+              <i class="bi bi-circle"></i><span>Behaviours</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'text_result_category_index' %}">
+              <i class="bi bi-circle"></i><span>Text Result Category</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'text_result_index' %}">
+              <i class="bi bi-circle"></i><span>Text Result Fields</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'result_info' %}">
+              <i class="bi bi-circle"></i><span>Result Settings</span>
+            </a>
+          </li>
+
+        </ul>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#communication" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-headset"></i><span>COMMUNICATION</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="communication" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{% url 'send_email' %}">
+              <i class="bi bi-circle"></i><span>Send Email</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'user_account_auto_mail' %}">
+              <i class="bi bi-circle"></i><span>Send Auto Email</span>
+            </a>
+          </li>
+
+           <li>
+            <a href="{% url 'message_index' %}">
+              <i class="bi bi-circle"></i><span>Messages</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'smtp_configuration_index' %}">
+              <i class="bi bi-circle"></i><span>Email Accounts</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'sms_configuration_index' %}">
+              <i class="bi bi-circle"></i><span>SMS Accounts</span>
+            </a>
+          </li>
+
+        </ul>
+      </li>
+
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#hr" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-people"></i><span>HUMAN RESOURCE</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="hr" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{% url 'staff_index' %}">
+              <i class="bi bi-circle"></i><span>Staff</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'staff_form' %}">
+              <i class="bi bi-circle"></i><span>Staff Excel Form</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'position_index' %}">
+              <i class="bi bi-circle"></i><span>Positions</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'department_index' %}">
+              <i class="bi bi-circle"></i><span>Departments</span>
             </a>
           </li>
 
 
         </ul>
-      </li><!-- End Tables Nav -->
+      </li>
 
-
-      <li class="nav-heading">Pages</li>
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="">
+        <a class="nav-link collapsed" data-bs-target="#lib-side-bar" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-book-half"></i><span>Library</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="lib-side-bar" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+
+          <li>
+            <a href="{% url 'book_borrow' %}">
+              <i class="bi bi-circle"></i><span>Borrow Book</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'borrowed_books' %}">
+              <i class="bi bi-circle"></i><span>Return Book</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'book_index' %}">
+              <i class="bi bi-circle"></i><span>Books</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'e_book_index' %}">
+              <i class="bi bi-circle"></i><span>E-Books</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'pdf_book_index' %}">
+              <i class="bi bi-circle"></i><span>PDFs</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'book_category_index' %}">
+              <i class="bi bi-circle"></i><span>Book Category</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'book_author_index' %}">
+              <i class="bi bi-circle"></i><span>Book Author</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'library_dashboard' %}">
+              <i class="bi bi-circle"></i><span>Library Dashboard</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'library_info' %}">
+              <i class="bi bi-circle"></i><span>Library Settings</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#invent-side-bar" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-diagram-3-fill"></i><span>INVENTORY</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="invent-side-bar" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+
+          <li>
+            <a href="{% url 'inventory_dashboard' %}?session={{academic_info.session.id}}&term={{academic_info.term}}">
+              <i class="bi bi-circle"></i><span>Dashboard</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'inventory_item_index' %}">
+              <i class="bi bi-circle"></i><span>Items</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'inventory_select_student' %}">
+              <i class="bi bi-circle"></i><span>Student Collect</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'inventory_stock_out_index' %}?session={{academic_info.session.id}}&term={{academic_info.term}}&mode=assign">
+              <i class="bi bi-circle"></i><span>Collections</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'inventory_select_staff' %}">
+              <i class="bi bi-circle"></i><span>Staff Collect</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'asset_index' %}">
+              <i class="bi bi-circle"></i><span>Assets</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'inventory_stock_index' %}?session={{academic_info.session.id}}&term={{academic_info.term}}">
+              <i class="bi bi-circle"></i><span>Item Stock In</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'inventory_assign_index' %}">
+              <i class="bi bi-circle"></i><span>Assigned Items</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'inventory_category_index' %}">
+              <i class="bi bi-circle"></i><span>Categories</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'inventory_supplier_index' %}">
+              <i class="bi bi-circle"></i><span>Inventory Suppliers</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'asset_category_index' %}">
+              <i class="bi bi-circle"></i><span>Asset Category</span>
+            </a>
+          </li>
+
+        </ul>
+      </li>
+
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#hostel" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-house-door-fill"></i><span>UTILITY</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="hostel" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{% url 'hostel_bed_index' %}">
+              <i class="bi bi-circle"></i><span>Hostel Bed</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'hostel_room_index' %}">
+              <i class="bi bi-circle"></i><span>Hostel Rooms</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'hostel_index' %}">
+              <i class="bi bi-circle"></i><span>Hostel</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'transport_route_index' %}">
+              <i class="bi bi-circle"></i><span>Routes</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'transport_vehicle_index' %}">
+              <i class="bi bi-circle"></i><span>Vehicles</span>
+            </a>
+          </li>
+
+            <li>
+            <a href="{% url 'utility_info' %}">
+              <i class="bi bi-circle"></i><span>Utility Settings</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#frontend" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-house-door-fill"></i><span>FRONT END</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="frontend" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{% url 'hostel_bed_index' %}">
+              <i class="bi bi-circle"></i><span>Setting</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'select_frontend_template' %}">
+              <i class="bi bi-circle"></i><span>Select Template</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'utility_info' %}">
+              <i class="bi bi-circle"></i><span>Front End Data</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'frontend_slider_index' %}">
+              <i class="bi bi-circle"></i><span>HomePage Sliders</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#tables-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-gear-fill"></i><span>SETTING</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="tables-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{% url 'school_info' %}">
+              <i class="bi bi-circle"></i><span>General Setting</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'group_index' %}">
+              <i class="bi bi-circle"></i><span>Roles/Permissions</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="nav-heading">Account</li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'user_profile' %}">
           <i class="bi bi-person"></i>
           <span>My Profile</span>
         </a>
       </li>
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="">
+        <a class="nav-link collapsed" href="{% url 'logout' %}">
           <i class="bi bi-box-arrow-in-right"></i>
           <span>Logout</span>
         </a>
@@ -165,7 +802,7 @@
   <main id="main" class="main">
     {% if messages %}
       {% for message in messages %}
-      <div class="alert alert-{{message.tags}} {% if message.tags == 'error' %} alert-danger {% endif %} alert-dismissible fade show" role="alert">
+      <div class="alert alert-{{message.tags}} {% if message.tags == 'error' %} alert-danger {% endif %} alert-dismissible fade show non-printable" role="alert">
           <i class="bi bi-exclamation-octagon me-1"></i>
           {{message}}
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -174,12 +811,12 @@
     {% endif %}
 
     {% if 0 %}
-    <div class="pagetitle">
+    <div class="pagetitle non-printable">
       <h1>{% block 'page' %} {%endblock %}</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="% url 'dashboard' %}">Home</a></li>
-          <li class="breadcrumb-item active">{% block 'subpage' %} {%endblock %}</li>
+          <li class="breadcrumb-item active">{% block 'subpage' %} {% endblock %}</li>
         </ol>
       </nav>
     </div><!-- End Page Title -->
@@ -191,7 +828,7 @@
 
   </main><!-- End #main -->
 
-  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+  <a href="#" class="back-to-top non-printable d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
   <!-- Vendor JS Files -->
   <script src="{% static 'admin_dashboard/vendor/apexcharts/apexcharts.min.js' %}"></script>

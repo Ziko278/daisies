@@ -1,0 +1,405 @@
+{% extends 'admin_dashboard/layout.html' %}
+{% load static %}
+{% block 'main' %}
+<div class="card">
+    <div class="card-body ">
+        <h5 class="card-title">Actions</h5>
+        <button title="Edit Hostel" type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#edit{{ forloop.counter }}"><i class="bi bi-pencil-square"></i></button>
+        <button title="Assign Hostel Rep" type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#hostelrep"><i class="bi bi-person"></i></button>
+        <a type="button" title="Delete Hostel" href="{% url 'hostel_delete' hostel.id %}" class="btn btn-outline-danger"><i class="bi bi-trash"></i></a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body pt-3">
+                <ul class="nav nav-tabs nav-tabs-bordered">
+                    <li class="nav-item">
+                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Hostel Details</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#rooms">Rooms</button>
+                    </li>
+
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Students</button>
+                    </li>
+
+                </ul>
+
+                <div class="tab-content pt-2">
+                    <div class="tab-pane fade show active profile-overview" id="profile-overview">
+                        <h5 class="card-title">Hostel Details</h5>
+                        <div class="row">
+                            <div class="col-xxl-4 col-md-4">
+                                <div class="card info-card sales-card">
+                                    <div class="card-body">
+                                        <h5 class="card-title"></h5>
+                                        <div class="d-flex align-items-center">
+                                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                <i class="ri-hotel-fill"></i>
+                                            </div>
+                                            <div class="ps-3">
+                                                <h6>{{ hostel.name|upper }}</h6>
+                                                <span class="text-muted small pt-2 ps-1">Hostel Name</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xxl-4 col-md-4">
+                                <div class="card info-card sales-card">
+                                    <div class="card-body">
+                                        <h5 class="card-title"></h5>
+                                        <div class="d-flex align-items-center">
+                                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                <i class="ri-code-box-line"></i>
+                                            </div>
+                                            <div class="ps-3">
+                                                <h6>{{ hostel.hostel_type|upper }}</h6>
+                                                <span class="text-muted small pt-2 ps-1">Hostel Type</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-xxl-4 col-md-4">
+                                <div class="card info-card sales-card">
+                                    <div class="card-body">
+                                        <h5 class="card-title"></h5>
+                                        <div class="d-flex align-items-center">
+                                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                <i class="bi bi-people"></i>
+                                            </div>
+                                            <div class="ps-3">
+                                                <h6>{{ hostel.hostel_gender|upper }}</h6>
+                                                <span class="text-muted small pt-2 ps-1">Gender</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xxl-4 col-md-4">
+                                <div class="card info-card sales-card">
+                                    <div class="card-body">
+                                        <h5 class="card-title"></h5>
+                                        <div class="d-flex align-items-center">
+                                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                <i class="bi bi-house-door-fill"></i>
+                                            </div>
+                                            <div class="ps-3">
+                                                <h6>{{ hostel.room_hostel.all|length }}</h6>
+                                                <span class="text-muted small pt-2 ps-1">Number of Rooms</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xxl-4 col-md-4">
+                                <div class="card info-card sales-card">
+                                    <div class="card-body">
+                                        <h5 class="card-title"></h5>
+                                        <div class="d-flex align-items-center">
+                                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                <i class="ri-hotel-bed-fill"></i>
+                                            </div>
+                                            <div class="ps-3">
+                                                <h6>{{ hostel.bed_hostel.all|length }}</h6>
+                                                <span class="text-muted small pt-2 ps-1">Number of Beds</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xxl-4 col-md-4">
+                                <div class="card info-card sales-card">
+                                    <div class="card-body">
+                                        <h5 class="card-title"></h5>
+                                        <div class="d-flex align-items-center">
+                                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                <i class="ri-hotel-bed-line"></i>
+                                            </div>
+                                            <div class="ps-3">
+                                                <h6>{{ hostel.vacant_beds }}</h6>
+                                                <span class="text-muted small pt-2 ps-1">Vacant Beds</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 grid-margin">
+                                <div class="card" style="margin-top:15px;padding:20px">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <p class="card-title"> HOSTEL REP INFORMATION </p>
+                                                <div class="row">
+                                                    {% if hostel.hostel_rep %}
+                                                    <div class="col-md-4">
+                                                        <img class="rounded-circle" style="width:100px" {% if hostel.hostel_rep.image %} src="/media/{{ hostel.hostel_rep.image }}" {% else %} src="{% static 'admin_dashboard/images/default_image.jpg' %}" {% endif %} />
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <p> {{hostel.hostel_rep|title}}</p>
+                                                        <p>{% if hostel.hostel_rep.registration_number %} {{hostel.hostel_rep.registration_number|upper}} {% endif %}</p>
+                                                        <p>{% if hostel.hostel_rep.email %} {{hostel.hostel_rep.email|lower}} {% else %} Email Not Provided {% endif %}</p>
+                                                        <p><a title="view profile" href="{% url 'student_detail' hostel.hostel_rep.id %}" class="btn btn-primary"><i class="bi bi-eye"></i></a> </p>
+                                                    </div>
+                                                    {% else %}
+                                                        <h4 class="text-description">HOSTEL REP NOT ASSIGNED</h4>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p class="card-title"> ASSISTANT HOSTEL REP INFORMATION </p>
+                                                <div class="row">
+                                                    {% if hostel.assistant_hostel_rep %}
+                                                    <div class="col-md-4">
+                                                        <img class="rounded-circle" style="width:100px" {% if hostel.assistant_hostel_rep.image %} src="/media/{{ hostel.assistant_hostel_rep.image }}" {% else %} src="{% static 'admin_dashboard/images/default_image.jpg' %}" {% endif %} />
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <p> {{hostel.assistant_hostel_rep|title}}</p>
+                                                        <p>{% if hostel.assistant_hostel_rep.registration_number %} {{hostel.assistant_hostel_rep.registration_number|title}} {% endif %}</p>
+                                                        <p>{% if hostel.assistant_hostel_rep.mobile %} {{hostel.assistant_hostel_rep.mobile|title}} {% else %} Mobile Not Provided {% endif %}</p>
+                                                        <p><a title="view profile" href="{% url 'student_detail' hostel.assistant_hostel_rep.id %}" class="btn btn-primary"><i class="bi bi-eye"></i></a> </p>
+                                                    </div>
+                                                    {% else %}
+                                                        <h4>ASSISTANT HOSTEL REP NOT ASSIGNED</h4>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <p><i>This hostel was created by {{ hostel.user|lower }} at {{ hostel.created_at|date }} {% if hostel.updated_by %} and updated by {{ hostel.updated_by|lower }} at {{ hostel.updated_at|date }} {% endif %}</i></p>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade profile-edit pt-3" id="rooms">
+                        <div class="row">
+                            <div class="card-body">
+                                <h5 class="card-title">Rooms in {{ hostel.name|title }} Hostel</h5>
+                                <table class="table table-borderless datatable">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Room Name</th>
+                                            <th scope="col">Room Type</th>
+                                            <th scope="col">Gender</th>
+                                            <th class="text-center" scope="col">Beds</th>
+                                            <th class="text-center" scope="col">Vacant Beds</th>
+                                            <th scope="col">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if hostel.room_hostel.all %}
+                                        {% for room in hostel.room_hostel.all %}
+                                        <tr>
+                                            <th scope="row"> {{ forloop.counter }}</th>
+                                            <td>{{ room.name|upper }}</td>
+                                            <td>{{ room.room_type|upper }}</td>
+                                            <td>{{ room.room_gender|upper }}</td>
+                                            <td class="text-center">{{ room.bed_room.all|length }}</td>
+                                            <td class="text-center">{{ room.vacant_beds }}</td>
+                                            <td><a title="View Details" class="btn btn-primary" href="{% url 'hostel_room_detail' room.id %}"><i class="bi bi-eye"></i></a></td>
+                                        </tr>
+                                        {% endfor %}
+                                        {% else %}
+                                            <tr><td colspan="8"><h3 class="text-center">No Room in Hostel</h3></td></tr>
+                                        {% endif %}
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
+                        <div class="row">
+                            <div class="card-body">
+                                <h5 class="card-title">Students in {{ hostel.name|title }} Hostel</h5>
+                                <table class="table table-borderless datatable">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Full Name</th>
+                                            <th scope="col">Reg Number</th>
+                                            <th scope="col">Gender</th>
+                                            <th scope="col">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if hostel.students %}
+                                        {% for student in hostel.students %}
+                                        <tr>
+                                            <th scope="row"><img class="rounded-circle" style="width:50px" {% if student.image %} src="/media/{{ student.image }}" {% else %} src="{% static 'admin_dashboard/images/default_image.jpg' %}" {% endif %} /> </th>
+                                            <td>{{ student.surname|title }} {% if student.middle_name %} {{ student.middle_name|title }} {% endif %} {{ student.last_name|title }}</td>
+                                            <td>{% if student.registration_number %} {{ student.registration_number }} {% endif %}</td>
+                                            <td>{{ student.gender|title }}</td>
+                                            <td><a title="View Student Details" class="btn btn-primary" href="{% url 'student_detail' student.id %}"><i class="bi bi-eye"></i></a></td>
+                                        </tr>
+                                        {% endfor %}
+                                        {% else %}
+                                            <tr><td colspan="5"><h3 class="text-center">No Student Registered Yet </h3></td></tr>
+                                        {% endif %}
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form method="POST" action="{% url 'hostel_edit' hostel.id %}">
+    {% csrf_token %}
+    <div class="modal fade" id="edit{{ forloop.counter }}" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Hostel</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body row">
+                    <div class="form-floating col-md-6">
+                        <input type="text" name="name" class="form-control" value="{{ hostel.name }}" required>
+                        <label for="floatingName">Hostel Name <span style="color:red"><b>*</b></span></label>
+                    </div><br />
+                    <input type="hidden" name="updated_by" value="{{ user.id }}" />
+                    <div class="form-floating col-md-6">
+                        <select name="hostel_gender" class="form-control" required >
+                            <option {% if hostel.hostel_gender == 'male' %} selected {% endif %} value="male">MALE</option>
+                            <option {% if hostel.hostel_gender == 'female' %} selected {% endif %} value="female">FEMALE</option>
+                            <option {% if hostel.hostel_gender == 'combined' %} selected {% endif %} value="combined">COMBINED</option>
+                        </select>
+                        <br />
+                        <label for="floatingName">Gender <span style="color:red"><b></b></span></label>
+                    </div><br />
+
+                    <div class="form-floating col-md-6">
+                        <select name="hostel_type" class="form-control" required >
+                            <option {% if hostel.hostel_type == 'student' %} selected {% endif %} value="student">STUDENT</option>
+                            <option {% if hostel.hostel_type == 'staff' %} selected {% endif %} value="staff">STAFF</option>
+                            <option {% if hostel.hostel_type == 'combined' %} selected {% endif %} value="combined">COMBINED</option>
+                        </select>
+                        <br />
+                        <label for="floatingName">Hostel Type <span style="color:red"><b></b></span></label>
+                    </div><br />
+
+                    <div class="form-floating col-md-6">
+
+                    </div><br />
+
+                    <div class="col-md-6">
+                        <h4 class="card-title" style="margin-top:-20px">Select Classes </h4>
+                        <div class="form-floaing">
+                            <ul style="list-style:none">
+                                {% for class in class_list %}
+                                <li><input type="checkbox" name="student_class" {% if class in hostel.student_class.all %} checked {% endif %} value="{{class.id}}" /> {{class|upper}}</li>
+                                {% endfor %}
+                            </ul>
+                        </div><br />
+                    </div>
+
+                    <div class="col-md-6">
+                        <h4 class="card-title" style="margin-top:-20px">Select Sections </h4>
+                        <div class="form-floaing">
+                            <ul style="list-style:none">
+                                {% for section in class_section_list %}
+                                <li><input type="checkbox" name="class_section" {% if section in hostel.class_section.all %} checked {% endif %} value="{{section.id}}" /> {{section|upper}}</li>
+                                {% endfor %}
+                            </ul>
+                        </div><br />
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+<form method="POST" action="{% url 'hostel_rep_edit' hostel.id %}">
+    {% csrf_token %}
+    <div class="modal fade" id="hostelrep" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Assign Hostel Rep</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body row">
+                    <div class="col-md-6">
+                        <h4 class="card-title" style="margin-top:-20px">Select Hostel Rep </h4>
+                        <div class="form-floaing">
+                            <input type="hidden" name="updated_by" value="{{ user.id }}" />
+                            <ol class="list-group">
+                                <li class="list-group-item d-flex justify-content-between align-items-start">
+                                  <div class="ms-2 me-auto">
+                                    <div class="fw-bold"> ----------- SET NULL ----------- </div>
+                                  </div>
+                                  <span class=""><input type="radio" checked name="hostel_rep" value=""></span>
+                                </li>
+                                {% for student in student_list %}
+
+                                    <li class="list-group-item d-flex justify-content-between align-items-start">
+                                      <div class="ms-2 me-auto">
+                                        <div class="fw-bold"><img class="rounded-circle" style="width:40px;height:40px;" {% if student.image %} src="/media/{{ student.image }}" {% else %} src="{% static 'admin_dashboard/images/default_image.jpg' %}" {% endif %} />
+                                            {{ student|upper }}</div>
+                                      </div>
+                                      <span class=""><input type="radio" {% if student == hostel.hostel_rep %} checked {% endif %} name="hostel_rep" value="{{ student.id }}"></span>
+                                    </li>
+                                {% endfor %}
+                            </ol>
+                        </div><br />
+                    </div>
+
+                    <div class="col-md-6">
+                        <h4 class="card-title" style="margin-top:-20px">Select Assistant Hostel Rep </h4>
+                        <div class="form-floaing">
+                            <li class="list-group-item d-flex justify-content-between align-items-start">
+                              <div class="ms-2 me-auto">
+                                <div class="fw-bold"> ----------- SET NULL ----------- </div>
+                              </div>
+                              <span class=""><input type="radio" checked name="assistant_hostel_rep" value=""></span>
+                            </li>
+                            {% for student in student_list %}
+
+                            <li class="list-group-item d-flex justify-content-between align-items-start">
+                              <div class="ms-2 me-auto">
+                                <div class="fw-bold"><img class="rounded-circle" style="width:40px;height:40px;" {% if staff.image %} src="/media/{{ student.image }}" {% else %} src="{% static 'admin_dashboard/images/default_image.jpg' %}" {% endif %} />
+                                    {{ student|upper }}</div>
+                              </div>
+                              <span class=""><input type="radio" {% if student == hostel.assistant_hostel_rep %} checked {% endif %} name="assistant_hostel_rep" value="{{ student.id }}"></span>
+                            </li>
+                            {% endfor %}
+                        </div><br />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{%endblock %}

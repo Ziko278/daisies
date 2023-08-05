@@ -1,0 +1,23 @@
+{% extends 'admin_dashboard/layout.html' %}
+{% block 'main' %}
+{% load static %}
+<div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Delete Inventory Item Assignment</h4>
+            <p><b>Assignment:</b> <i>{{ inventory_assign.quantity }} unit{{ inventory_assign.quantity|pluralize }} of
+            {{ inventory_assign.inventory|title }} {% if inventory_assign.student_class.all|length > 0 %}
+                for {% for class in inventory_assign.student_class.all %} {{ class|upper }}{% if forloop.counter < inventory_assign.student_class.all|length %}, {% endif %} {% endfor %}
+                {% endif %}</i></p>
+
+            <p>The item Assignment will be permanently deleted.</p>
+            <form style="display:inline" method="post">
+                {% csrf_token %}
+
+                <button class="btn btn-success">Proceed</button>
+            </form>
+            <a class="btn btn-danger" href="{% url 'inventory_assign_index' %}"> Cancel</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'admin_dashboard/layout.html' %}
+{% block 'main' %}
+{% load static %}
+<form action="" method="POST">
+    {% csrf_token %}
+
+    <div class="card">
+        <div class="card-body ">
+            <h5 class="card-title">Enter Staff ID  </h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="text" name="staff_id" required autocomplete="off" class="form-control">
+                        <label for="floatingName">Staff ID </label>
+                        <br />
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-floating" style="">
+                        <input type="submit" style="width:150px;margin-left:50px" value="Proceed" class="btn btn-primary">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</form>
+
+{% endblock %}

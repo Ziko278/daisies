@@ -1,0 +1,41 @@
+{% extends 'admin_dashboard/layout.html' %}
+{% load static %}
+{% block 'main' %}
+<div class="card">
+    <div class="card-body ">
+        <h5 class="card-title">Actions</h5>
+        <a title="Edit PDF" href="{% url 'pdf_book_edit' pdf_book.id %}" class="btn btn-warning"><i class="bi bi-pencil-square"></i></a>
+        <a type="button" title="Delete PDF" href="{% url 'pdf_book_delete' pdf_book.id %}" class="btn btn-outline-danger"><i class="bi bi-trash"></i></a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body pt-3">
+                <ul class="nav nav-tabs nav-tabs-bordered">
+                    <li class="nav-item">
+                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">PDF Detail</button>
+                    </li>
+                </ul>
+
+                <div class="tab-content pt-2">
+                    <div class="tab-pane fade show active profile-overview" id="profile-overview">
+                        <h5 class="card-title">{{ pdf_book }}</h5>
+                        <div class="row">
+                            <iframe style="width:100%;height:600px" src="{{request.scheme}}://{{request.get_host}}{{pdf_book.pdf_file.url}}"></iframe>
+                            {% if pdf_book.description %} <p>Description: <i> {{ pdf_book.description }} {% endif %}</i></p>
+                            <p><i>This PDF was uploaded by {{ pdf_book.user|lower }} at {{ pdf_book.created_at|date }} {% if pdf_book.updated_by %} and updated by {{ pdf_book.updated_by|lower }} at {{ pdf_book.updated_at|date }} {% endif %}</i></p>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{%endblock %}

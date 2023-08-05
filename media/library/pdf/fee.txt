@@ -1,0 +1,6 @@
+FINE_TYPE = (
+        ('none', 'NONE'), ('percentage', 'PERCENTAGE'), ('amount', 'AMOUNT')
+    )
+    fine_type = models.CharField(max_length=10, choices=FINE_TYPE, blank=True, null=True)
+    fine_amount = models.FloatField(null=True, blank=True, default=0)
+    fine_percentage = models.FloatField(null=True, blank=True, default=0)

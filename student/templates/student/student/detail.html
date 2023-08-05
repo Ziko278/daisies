@@ -1,0 +1,338 @@
+{% extends 'admin_dashboard/layout.html' %}
+{% load static %}
+{% block 'main' %}
+<div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">ACTIONS:
+                <a title="Edit Student" href="{% url 'student_edit' student.id %}" class="btn btn-primary"><i class="bi bi-pencil-square"></i></a>
+                <a title="Delete Student" href="{% url 'student_delete' student.id %}" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+                {% if student.status != 'graduated' %}
+                <button title="Print ID Card" onclick="printID()" class="btn btn-primary"><i class="bi bi-person-badge"></i></button>
+                {% endif %}
+            </h4>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body pt-3">
+                <ul class="nav nav-tabs nav-tabs-bordered">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">BIO DATA</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">RESULT</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-settings">ATTENDANCE</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password">FEES</a>
+                    </li>
+                </ul>
+
+                <div class="tab-content pt-2">
+                    <div class="tab-pane fade show active profile-overview" id="profile-overview">
+
+                        <div class="col-12 grid-margin">
+                            <div class="card">
+                                <div class="card-body" style="padding:20px">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p class="card-title"> STUDENT INFORMATION </p>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <image {% if student.image %} src="/media/{{ student.image }}" {% else %} src="{% static 'admin_dashboard/images/default_image.jpg' %}" {% endif %} style="width:100px;height:100px;border-radius:5px;" />
+                                                    <p style="margin-top:5px;"><span class="text-center {% if student.status|lower == 'active' %} text-success {% else %} text-danger {% endif %} "> {{student.status|upper}} </span> </p>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <p>{{ student.surname|title }} {% if student.middle_name %} {{ student.middle_name|title }} {% endif %} {{ student.last_name|title }}</p>
+                                                    <p>{% if student.registration_number %} {{student.registration_number|upper}} {% else %} NO REGISTRATION NUMBER {% endif %}</p>
+                                                    <p>{% if student.status != 'graduated' %} {{student.student_class|upper}} {{student.class_section|upper}} {% else %} {{ student.student_academic_record.session_of_graduation }} SET {% endif %}</p>
+                                                    <p>Class Number: {{student.class_number}} </p>
+                                                    <p>{{student.gender|title}} </p>
+                                                 </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p class="card-title"> PARENT INFORMATION </p>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <image {% if student.parent.image %} src="/media/{{ student.parent.image }}" {% else %} src="{% static 'admin_dashboard/images/default_image.jpg' %}" {% endif %} style="width:100px;height:100px;border-radius:5px;" />
+                                                    <p style="margin-top:5px;"><span class="text-center">{{student.relationship_with_parent|upper}} </span> </p>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <p>{{ student.parent.title|title }} {{ student.parent.surname|title }} {% if student.parent.middle_name %} {{ student.parent.middle_name|title }} {% endif %} {{ student.parent.last_name|title }}</p>
+                                                    <p>{% if student.parent.mobile %} {{student.parent.mobile|title}} {% else %} Mobile Not Provided {% endif %}</p>
+                                                    <p>{% if student.parent.email %} {{student.parent.email|lower}} {% else %} Email Not Provided {% endif %}</p>
+                                                    <p>{% if student.parent.residential_address %} {{student.parent.residential_address|title}} {% else %} Address Not Provided {% endif %}</p>
+                                                    <p><a class="btn btn-primary" href="{% url 'parent_detail' student.parent.id %}"><i class="bi bi-eye"></i></a> </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="accordion-item" style="margin-top:20px">
+                                        <h2 class="accordion-header" id="headingTwo">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                                <b>MORE INFORMATION</b>
+                                            </button>
+                                        </h2>
+                                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                            <div class="accordion-body">
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <p class="card-title"> OTHER INFORMATION </p>
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <p>State of Origin : <i><b>{% if student.state %} {{ student.state|upper }} {% else %} Not Provided {% endif %}</b></i></p>
+                                                                        <p>L G A : <i><b>{% if student.lga %} {{ student.lga|upper }} {% else %} Not Provided {% endif %}</b></i></p>
+                                                                        <p>DOB : <i><b>{% if student.date_of_birth %} {{ student.date_of_birth }} {% else %} Not Provided {% endif %}</b></i></p>
+                                                                        <p>Email : <i><b>{% if student.email %} {{ student.email }} {% else %} Not Provided {% endif %}</b></i></p>
+                                                                        <p>Mobile : <i><b>{% if student.mobile %} {{ student.mobile }} {% else %} Not Provided {% endif %}</b></i></p>
+                                                                        <p>Religion : <i><b>{% if student.religion %} {{student.religion|upper }} {% else %} Not Provided {% endif %}</b></i></p>
+                                                                        <p>Blood Group : <i><b>{% if student.blood_group %} {{student.blood_group|upper }} {% else %} Not Provided {% endif %}</b></i></p>
+                                                                        <p>Genotype : <i><b>{% if student.genotype %} {{student.genotype|upper }} {% else %} Not Provided {% endif %}</b></i></p>
+                                                                        <p>Username : <i><b>{{ student.registration_number }}</b></i></p>
+                                                                        <p>Default Password : <i><b>{{ student.student_account.default_password }}</b></i></p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <p class="card-title"> UTILITY </p>
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <p>Border : <i><b>{% if student.is_boarding %} Yes {% else %} No {% endif %}</b></i></p>
+                                                                        <p>Hostel : <i><b>{% if student.hostel %} {{ student.hostel|upper }} {% else %} ---------- {% endif %}</b></i></p>
+                                                                        <p>Room : <i><b>{% if student.hostel_room %} {{ student.hostel_room|upper }} {% else %} ---------- {% endif %}</b></i></p>
+                                                                        <p>Bed : <i><b>{% if student.hostel_bed %} {{ student.hostel_bed|upper }} {% else %} ---------- {% endif %}</b></i></p>
+                                                                        <p>Transport : <i><b>{% if student.use_transport %} Yes {% else %} No {% endif %}</b></i></p>
+                                                                        <p>Route : <i><b>{% if student.transport_route %} {{ student.transport_route|upper }} {% else %} ---------- {% endif %}</b></i></p>
+                                                                        <p>Vehicle : <i><b>{% if student.transport_vehicle %} {{ student.transport_vehicle|upper }} {% else %} ---------- {% endif %}</b></i></p>
+                                                                        <p>Driver : <i><b>{% if student.transport_vehicle.driver %} {{ student.transport_vehicle.driver|upper }} {% else %} ---------- {% endif %}</b></i></p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {% if student.status != 'graduated' %}
+                                                <!-- ID CARD START-->
+                                                <div id="id-card" class="row" style="margin-top:20px">
+                                                    <div class="col-6" style="margin-bottom:20px">
+                                                        <div id="card-front">
+                                                            <div style="width:400px;height:500px;border:2px solid blue;">
+                                                                <div style="background-color:blue;border-radius: 0px 0px 30px 30px;height:170px;background:linear-gradient(to bottom right, #ff0000, #0000ff);padding:10px">
+                                                                    <h4 style="color:white;font-family:cursive;text-shadow:2px 2px black">{{ school_info }}</h4>
+                                                                    <img src="/media/{{school_info.logo}}" style="width:100px;height:70px;border-radius:5px">
+                                                                    <div class="text-center" style="text-align:center;padding:auto">
+                                                                        <image {% if student.image %} src="/media/{{ student.image }}" {% else %} src="{% static 'admin_dashboard/images/default_image.jpg' %}" {% endif %} style="display:block;width:150px;height:150px;border-radius:75px;margin:auto" />
+                                                                    </div>
+
+                                                                </div>
+                                                                <div style="padding-top:100px">
+                                                                    <h3 class="text-center" style="color:black;font-weight:bold;font-family:courier">{{ student|title}}</h3>
+                                                                    <p class="text-center" style="font-weight:bold;font-family:sans serif">{% if student.student_class %} {{ student.student_class|upper }} {% if student.class_section %} {{ student.class_section|upper }} {% endif %} {% endif %}</p>
+                                                                </div>
+
+                                                                <div style="padding:5px;padding-left:10px;">
+                                                                    <p><label><b>Student ID</b></label> : <span class="info">{{ student.registration_number|upper }}</span></p>
+                                                                    <p style="margin-top:-15px"><label><b>Phone No</b></label> : <span class="info">{% if student.mobile %} {{ student.mobile }} {% endif %}</span></p>
+                                                                    <p style="margin-top:-15px"><label><b>Email</b></label> : <span class="info">{% if student.email %} {{ student.email|lower }} {% endif %}</span></p>
+                                                                    <p style="margin-top:-15px"><label><b>Blood Grp</b></label> : <span class="info">{% if student.blood_group %} {{ student.blood_group|upper }} {% endif %}</span></p>
+                                                                </div>
+
+                                                                <div style="background:blue;color:blue;margin-top:-5px;border-radius: 30px 30px 0px 0px;">
+                                                                    .
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-6">
+                                                        <div id="card-back">
+                                                            <div style="width:400px;height:500px;border:2px solid blue;">
+                                                                <div style="background-color:blue;border-radius: 0px 0px 30px 30px;height:170px;background:linear-gradient(to bottom right, #ff0000, #0000ff);padding:10px">
+                                                                    <h4 style="color:white;font-family:cursive;text-shadow:2px 2px black;float:right">{{ school_info }}</h4>
+                                                                    <img src="/media/{{school_info.logo}}" style="width:100px;height:70px;border-radius:5px;">
+                                                                    <div class="text-center" style="text-align:center;padding:auto">
+                                                                        <br />
+                                                                        <image {% if student.barcode %} src="/{{ student.barcode }}" {% endif %} style="display:block;width:320px;height:220px;margin:auto" />
+                                                                    </div>
+
+                                                                </div>
+
+                                                                <div style="padding:5px;padding-left:10px;padding-top:140px">
+                                                                    <p class="text-center">This Card remains the Property of {{ school_info }}. If found, Please return to the address below.</p>
+                                                                    <p class="text-center" style="margin-top:-15px">{{ school_info }}</p>
+                                                                    <p class="text-center" style="margin-top:-15px">{{ school_info.mobile_1 }}{% if school_info.mobile_2 %}, {{ school_info.mobile_2 }}{% endif %}</p>
+                                                                    <p class="text-center" style="margin-top:-15px">{{ school_info.address|title }}</p>
+                                                                </div>
+
+                                                                <div style="background:blue;color:blue;margin-top:-5px;border-radius: 30px 30px 0px 0px;">
+                                                                    .
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- ID CARD END-->
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
+                        <div class="row">
+                            <div class="col-12 grid-margin">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h4 class="card-title">RESULT ARCHIVE SELECTION</h4>
+                                        <form method="" action="{% url 'result_archive_sheet' student.id %}" class="form-sample" enctype="multipart/form-data">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group row">
+                                                        <label class="col-sm-4 col-form-label">Select a Session</label>
+                                                        <div class="col-sm-8">
+                                                            <select class="form-control" name="session_pk" required >
+                                                                <option value="">-------------------</option>
+                                                                {% if student_session_list %}
+                                                                  {% for session in student_session_list %}
+                                                                    <option value="{{session.id}}">{{session}}</option>
+                                                                  {% endfor %}
+                                                                {% endif %}
+                                                            </select><br />
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <div class="form-group row">
+                                                        <label class="col-sm-4 col-form-label">Select a Term</label>
+                                                        <div class="col-sm-8">
+                                                            <select class="form-control" name="term" required>
+                                                                <option value="">-------------------</option>
+                                                                <option value="1st term">1st Term</option>
+                                                                <option value="2nd term">2nd Term</option>
+                                                                <option value="3rd term">3rd Term</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group row">
+                                                        <div class="col-sm-12" style="float:right">
+                                                            <button style="width:150px;margin:10px" class="btn btn-success btn-rounded">Proceed</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 grid-margin">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">CUMULATIVE RESULT ARCHIVE SELECTION</h4>
+                                    <form method="" action="{% url 'select_result_cumulative_view' %}" class="form-sample" enctype="multipart/form-data">
+                                        <input type="hidden" name="student_pk" value="{{student.id}}">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group row">
+                                                    <label class="col-sm-4 col-form-label">Select a Session</label>
+                                                    <div class="col-sm-8">
+                                                        <select class="form-control" name="session_pk" required >
+                                                            <option value="">-------------------</option>
+                                                            {% if student_session_list %}
+                                                              {% for session in student_session_list %}
+                                                                <option value="{{session.id}}">{{session}}</option>
+                                                              {% endfor %}
+                                                            {% endif %}
+                                                        </select><br />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group row">
+                                                    <div class="col-sm-12" style="float:right">
+                                                        <button style="width:150px;margin:10px" class="btn btn-success btn-rounded">Proceed</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="tab-pane fade pt-3" id="profile-settings">
+                        <h5 class="card-title"></h5>
+
+                    </div>
+
+                    <div class="tab-pane fade pt-3" id="profile-change-password">
+
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+<style>
+    label {
+        width: 90px
+    }
+    .info {
+        margin-left:10px
+    }
+</style>
+
+<script src="{% static 'admin_dashboard/scripts/jquery.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<script type="text/javascript">
+	function printID() {
+		const { jsPDF } = window.jspdf;
+
+		let doc = new jsPDF(
+		'l', 'mm', [1500, 1400]);
+		let pdfjs = document.querySelector('#id-card');
+
+		doc.html(pdfjs, {
+			callback: function(doc) {
+				doc.save("{{student.surname|title}}-{{student.last_name|title}}-ID-Card.pdf");
+			},
+			x: 12,
+			y: 12
+		});
+	}
+</script>
+{%endblock %}

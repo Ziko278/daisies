@@ -1,0 +1,211 @@
+{% extends 'admin_dashboard/layout.html' %}
+{% load static %}
+{% load humanize %}
+{% load fee_custom_filters %}
+{% block 'main' %}
+
+<style>
+	td, th{
+		border:1px solid black;
+		padding-left:5px;
+		text-align:center;
+		font-family:courier
+	}
+	.student-summary span{
+		margin-right:20px
+	}
+	.student-info span {
+		margin-right:30px
+	}
+
+	.student-info {
+		font-size: 14px;
+		font-family: sans serif
+	}
+	{% for subject in subject_list %}
+		#bar{{forloop.counter}} {
+			{% for key, value in result.result.items %}
+				{% if subject.id|stringformat:"i" == key %}
+					 height:{{ value.total|floatformat }}%;
+					 border: 1px solid red;
+
+				{% endif %}
+			{% endfor %}
+		}
+	{% endfor %}
+	th {
+		height: 20px;
+		font-size: 12px;
+		padding:0px
+	}
+
+
+
+</style>
+{% if form.errors %}
+    <h5 class="text-danger">{{form.errors}}</h5>
+{% endif %}
+
+{% if inventory_stock_out.mode == 'damage' %}
+<div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+            <p>
+                <button type="button" title="Print Inventory Receipt" id="download-detail-receipt-button" class="btn btn-primary"><i class="bi bi-printer-fill"></i> </button>
+            </p>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+            {% if inventory_stock_out.student %}
+            <h4 class="card-title">Name: {{ inventory_stock_out.student|title }} <br />
+                Reg No: {{ inventory_stock_out.student.registration_number|upper }} <br />
+                Class: {% if inventory_stock_out.student.student_class %} {{ inventory_stock_out.student.student_class|upper }} {{ inventory_stock_out.student.class_section|upper }} {% endif %}
+                <img class="rounded-circle" style="margin-top:-30px;display:inline;float:right;width:100px;height:100px;border-radius:5px;" {% if inventory_stock_out.student.image %} src="/media/{{ inventory_stock_out.student.image }}" {% else %} src="{% static 'admin_dashboard/images/default_image.jpg' %}" {% endif %} />
+            </h4>
+            {% elif inventory_stock_out.staff %}
+            <h4 class="card-title">Name: {{ inventory_stock_out.staff|title }} <br />
+                Staff ID: {{ inventory_stock_out.staff.staff_id|upper }} <br />
+                Designation: {{ inventory_stock_out.staff.position|title }} <br />
+                <img class="rounded-circle" style="margin-top:-60px;display:inline;float:right;width:100px;height:100px;border-radius:5px;" {% if inventory_stock_out.staff.image %} src="/media/{{ inventory_stock_out.staff.image }}" {% else %} src="{% static 'admin_dashboard/images/default_image.jpg' %}" {% endif %} />
+            </h4>
+            {% endif %}
+            <p>
+                <button type="button" title="Print Inventory Receipt" id="download-detail-receipt-button" class="btn btn-primary"><i class="bi bi-printer-fill"></i> </button>
+
+            </p>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body pt-3">
+                <ul class="nav nav-tabs nav-tabs-bordered">
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#current-payment">Stock Out Detail</button>
+                    </li>
+
+                </ul>
+
+                <div class="tab-content pt-2">
+
+                    <div class="tab-pane fade show active profile-edit pt-3" id="current-payment">
+                        <div id="download-detailed-receipt">
+                            <div style="background-color:white;border:2px solid skyblue;">
+
+                                <div class="bg-success" style="color:white;height:30px;border-bottom:1px solid black;border-top:0px solid black;">
+                                    <p class="text-center" style="font-weight:bold;font-family:cursive">Item Receipt </p>
+                                </div>
+
+                                <div style="padding:10px;font-family:cursive">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            No: {{ fee_payment.reference|upper }}
+                                        </div>
+                                        <div class="col-6">
+                                            Date: {{ fee_payment.date|date }}
+                                        </div>
+                                        <div class="col-12">
+                                            Name: {{ fee_payment.student|title }}
+                                        </div>
+
+                                        <div class="col-6">
+                                            Session: {{ fee_payment.session}}
+                                        </div>
+                                        <div class="col-6">
+                                            Term: {{ fee_payment.term|upper }}
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div>
+                                    <table class="table">
+                                    <thead>
+                                      <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Fee</th>
+                                        <th scope="col">Amount</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for payment in fee_payment.fees.all %}
+                                      <tr>
+                                            <th scope="row">{{ forloop.counter }}</th>
+                                            <td>{{ payment.fee.fee|title }}</td>
+                                            <td>{{ payment.amount|intcomma }}</td>
+                                      </tr>
+
+                                    {% endfor %}
+                                     <tr>
+                                        <td colspan="3" style="color:white;background:white">hi</td>
+                                      </tr>
+                                    <tr>
+                                        <th></th>
+                                        <th>Total</th>
+                                        <th>{{ fee_payment.amount|intcomma }}</th>
+                                    </tr>
+                                    </tbody>
+                                  </table>
+                                    <h4 class="card-title" style="padding:10px">{{ amount_in_word|title }} Naira Only</h4>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="{% static 'admin_dashboard/scripts/jquery.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+
+<script type="text/javascript">
+	$(document).on('click','#download-detail-receipt-button', function(){
+		const { jsPDF } = window.jspdf;
+
+		let doc = new jsPDF(
+		'l', 'mm', [1500, 1400]);
+		let pdfjs = document.querySelector('#download-detailed-receipt')
+
+		doc.html(pdfjs, {
+			callback: function(doc) {
+				doc.save("{{fee_payment.student.surname|title}}-{{fee_payment.student.last_name|title}}-Receipt.pdf");
+			},
+			x: 12,
+			y: 12
+		});
+    })
+</script>
+
+<script type="text/javascript">
+	$(document).on('click','#download-summary-receipt-button', function(){
+		const { jsPDF } = window.jspdf;
+
+		let doc = new jsPDF(
+		'l', 'mm', [1500, 1400]);
+		let pdfjs = document.querySelector('#download-summary-receipt')
+
+		doc.html(pdfjs, {
+			callback: function(doc) {
+				doc.save("{{fee_payment.student.surname|title}}-{{fee_payment.student.last_name|title}}-Receipt.pdf");
+			},
+			x: 12,
+			y: 12
+		});
+    })
+</script>
+{%endblock %}
