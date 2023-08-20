@@ -1,3 +1,4 @@
+from django.db.models.aggregates import Sum
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.core import serializers
@@ -1042,10 +1043,13 @@ class InventoryDashboardView(LoginRequiredMixin, TemplateView):
             inventory_list = InventoryItemModel.objects.filter(type=user_type)
             current_inventory_list = InventoryStockModel.objects.filter(type=user_type, session=session, term=term)
             damage_inventory_list = InventoryStockOutModel.objects.filter(type=user_type, mode='damage', session=session, term=term)
+            asset_worth = AssetModel.objects.filter(type=self.request.user.profile.type).aggregate(Sum('worth'))['worth__sum']
         else:
             inventory_list = InventoryItemModel.objects.filter()
             current_inventory_list = InventoryStockModel.objects.filter(session=session, term=term)
             damage_inventory_list = InventoryStockOutModel.objects.filter(mode='damage', session=session, term=term)
+            asset_worth = AssetModel.objects.filter(type=self.request.user.profile.type).aggregate(Sum('worth'))[
+                'worth__sum']
 
         total_inventory_worth = 0
         for inventory in inventory_list:
@@ -1058,8 +1062,8 @@ class InventoryDashboardView(LoginRequiredMixin, TemplateView):
         context['current_session'] = session
         context['session_list'] = SessionModel.objects.all()
         context['term'] = term
+        context['asset_worth'] = asset_worth if asset_worth else 0
         context['total_inventory_worth'] = total_inventory_worth
         context['current_inventory_worth'] = current_inventory_worth
-
 
         return context

@@ -1,0 +1,146 @@
+{% extends 'admin_dashboard/layout.html' %}
+{% load static %}
+{% load humanize %}
+{% block 'main' %}
+
+<section class="section dashboard">
+    <div class="row">
+        <h4 class="card-title">UTILITY DASHBOARD</h4>
+        <div class="col-xxl-4 col-md-6">
+            <div class="card info-card sales-card">
+                <div class="card-body">
+                    <h5 class="card-title">Students <span>| Boarding Students</span></h5>
+                    <div class="d-flex align-items-center">
+                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <div class="ps-3">
+                            <h6>{{ boarding_student }}</h6>
+                            <span class="text small pt-1 fw-bold">Total Boarding Students</span> <span class="text-muted small pt-2 ps-1"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xxl-4 col-md-6">
+            <div class="card info-card sales-card">
+                <div class="card-body">
+                    <h5 class="card-title">Students <span>| Male Boarding Students</span></h5>
+                    <div class="d-flex align-items-center">
+                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                            <i class="bi bi-gender-male"></i>
+                        </div>
+                        <div class="ps-3">
+                            <h6>{{ male_boarding_student }}</h6>
+                            <span class="text small pt-1 fw-bold">Total Boarding Students</span> <span class="text-muted small pt-2 ps-1"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xxl-4 col-md-6">
+            <div class="card info-card sales-card">
+                <div class="card-body">
+                    <h5 class="card-title">Students <span>| Female Boarding Students</span></h5>
+                    <div class="d-flex align-items-center">
+                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                            <i class="bi bi-gender-female"></i>
+                        </div>
+                        <div class="ps-3">
+                            <h6>{{ female_boarding_student }}</h6>
+                            <span class="text small pt-1 fw-bold">Total Boarding Students</span> <span class="text-muted small pt-2 ps-1"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xxl-4 col-md-6">
+            <div class="card info-card sales-card">
+                <div class="card-body">
+                    <h5 class="card-title">Students <span>| Percentage Boarding Students</span></h5>
+                    <div class="d-flex align-items-center">
+                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                            <i class="bi bi-percent"></i>
+                        </div>
+                        <div class="ps-3">
+                            <h6>{{ percentage_boarding_student }}</h6>
+                            <span class="text small pt-1 fw-bold">Percentage Boarding Students</span> <span class="text-muted small pt-2 ps-1"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xxl-4 col-md-6">
+            <div class="card info-card sales-card">
+                <div class="card-body">
+                    <h5 class="card-title">Students <span>| Transport Users</span></h5>
+                    <div class="d-flex align-items-center">
+                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <div class="ps-3">
+                            <h6>{{ transport_student }}</h6>
+                            <span class="text small pt-1 fw-bold">Transport Using Students</span> <span class="text-muted small pt-2 ps-1"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xxl-4 col-md-6">
+            <div class="card info-card sales-card">
+                <div class="card-body">
+                    <h5 class="card-title">Hostel <span>| Total Bed</span></h5>
+                    <div class="d-flex align-items-center">
+                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                            <i class="ri-hotel-bed-fill"></i>
+                        </div>
+                        <div class="ps-3">
+                            <h6>{{ total_bed }}</h6>
+                            <span class="text small pt-1 fw-bold">Total Bed</span> <span class="text-muted small pt-2 ps-1"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xxl-4 col-md-6">
+            <div class="card info-card sales-card">
+                <div class="card-body">
+                    <h5 class="card-title">Hostel <span>| Occupied Bed</span></h5>
+                    <div class="d-flex align-items-center">
+                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                            <i class="ri-hotel-bed-fill"></i>
+                        </div>
+                        <div class="ps-3">
+                            <h6>{{ occupied_bed }}</h6>
+                            <span class="text small pt-1 fw-bold">Occupied Bed</span> <span class="text-muted small pt-2 ps-1"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xxl-4 col-md-6">
+            <div class="card info-card sales-card">
+                <div class="card-body">
+                    <h5 class="card-title">Hostel <span>| Vacant Bed</span></h5>
+                    <div class="d-flex align-items-center">
+                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                            <i class="ri-hotel-bed-fill"></i>
+                        </div>
+                        <div class="ps-3">
+                            <h6>{{ vacant_bed }}</h6>
+                            <span class="text small pt-1 fw-bold">Vacant Bed</span> <span class="text-muted small pt-2 ps-1"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

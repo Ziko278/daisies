@@ -52,7 +52,7 @@
                 Class: {% if fee_payment.student.student_class %} {{ fee_payment.student.student_class|upper }} {{ fee_payment.student.class_section|upper }} {% endif %}
                 <img class="rounded-circle" style="margin-top:-30px;display:inline;float:right;width:100px;height:100px;border-radius:5px;" {% if fee_payment.student.image %} src="/media/{{ fee_payment.student.image }}" {% else %} src="{% static 'admin_dashboard/images/default_image.jpg' %}" {% endif %} /></h4>
             <p>
-                <button type="button" title="Print Detailed Receipt" id="download-detail-receipt-button" class="btn btn-primary"><i class="bi bi-printer-fill"></i> </button>
+                <button type="button" title="Print Detailed Receipt" id="download-detail-receipt-button"  class="btn btn-primary"><i class="bi bi-printer-fill"></i> </button>
                 <button type="button" title="Print Receipt Summary" id="download-summary-receipt-button" data-bs-toggle="modal" data-bs-target="#bulk-payment" class="btn btn-primary"><i class="bi bi-printer"></i> </button>
 
             </p>
@@ -110,18 +110,16 @@
                             <div style="background-color:white;border:2px solid skyblue;">
                                 <div class="" style="color:black;font-family:cursive;background-color:white;border-bottom:2px solid black;height:135px">
                                     <div class="row">
-                                        <div class="col-2">
-                                             <image {% if student.image %} src="/media/{{ student.image }}" {% else %} src="{% static 'admin_dashboard/images/default_image.jpg' %}" {% endif %} style="width:100%;height:133px;border-radius:0px;" />
-                                        </div>
 
-                                        <div class="col-8" style="padding:15px">
+                                        <div class="col-9" style="padding:15px">
                                             <h4 class="text-center" style="color:grey;font-family:serif"><b>{{ general_setting.name|upper }}</b></h4>
-                                            <h6 class="text-center" style="color:grey;font-size:14px;margin-top:10px"><b>...Laying Solid Foundation</b></h6>
-                                            <h6 class="text-center" style="color:grey">PLOT 78, CADASTRAL ZONE C08 DAKWO</h6>
-                                            <p class="text-center" style="color:grey;margin-bottom:10px;font-size:13px">080 3285 5344 | info@daisesacademy.com.ng | https://info@daisesacademy.com.ng </p>
+                                            <h6 class="text-center" style="color:grey;font-size:14px;margin-top:10px"><b>...{{ general_setting.motto|title }}</b></h6>
+                                            <h6 class="text-center" style="color:grey">{{ general_setting.address|upper }}</h6>
+                                            <p class="text-center" style="color:grey;margin-bottom:10px;font-size:13px">{{ general_setting.mobile_1 }} | 
+						{{ general_setting.website|lower }} | {{ general_setting.email|lower }} </p>
                                         </div>
 
-                                        <div class="col-2">
+                                        <div class="col-3">
                                              <image src="/media/{{ general_setting.logo }}" style="width:100%;height:133px;border-radius:0px;" />
                                         </div>
                                     </div>
@@ -193,10 +191,12 @@
                                     <div class="row">
 
                                         <div class="col-9" style="padding:15px">
-                                            <h4 class="text-center" style="color:grey;font-family:serif"><b>{{ general_setting.name|upper }}</b></h4>
-                                            <h6 class="text-center" style="color:grey;font-size:14px;margin-top:10px"><b>...Laying Solid Foundation</b></h6>
-                                            <h6 class="text-center" style="color:grey">PLOT 78, CADASTRAL ZONE C08 DAKWO</h6>
-                                            <p class="text-center" style="color:grey;margin-bottom:10px;font-size:13px">080 3285 5344 | info@daisesacademy.com.ng | https://info@daisesacademy.com.ng </p>
+						<h4 class="text-center" style="color:grey;font-family:serif"><b>{{ general_setting.name|upper }}</b></h4>
+                                            <h6 class="text-center" style="color:grey;font-size:14px;margin-top:10px"><b>...{{ general_setting.motto|title }}</b></h6>
+                                            <h6 class="text-center" style="color:grey">{{ general_setting.address|upper }}</h6>
+                                            <p class="text-center" style="color:grey;margin-bottom:10px;font-size:13px">{{ general_setting.mobile_1 }} |
+                                                {{ general_setting.website|lower }} | {{ general_setting.email|lower }} </p>
+
                                         </div>
 
                                         <div class="col-3">
@@ -261,37 +261,24 @@
 
 <script type="text/javascript">
 	$(document).on('click','#download-detail-receipt-button', function(){
-		const { jsPDF } = window.jspdf;
-
-		let doc = new jsPDF(
-		'l', 'mm', [1500, 1400]);
-		let pdfjs = document.querySelector('#download-detailed-receipt')
-
-		doc.html(pdfjs, {
-			callback: function(doc) {
-				doc.save("{{fee_payment.student.surname|title}}-{{fee_payment.student.last_name|title}}-Receipt.pdf");
-			},
-			x: 12,
-			y: 12
-		});
+		pdfjs = $('#download-detailed-receipt')
+	    var elementToPrint = $('#download-detailed-receipt').clone();
+            var printWindow = window.open("", "_blank");
+		printWindow.document.write('<html><head><title>Printed Content</title>');
+            printWindow.document.write('<style>' + getComputedStyle(document.body).cssText + '</style>'); // Include styles from the current page
+            printWindow.document.write('</head><body>');
+            printWindow.document.write(elementToPrint[0].outerHTML);
+            printWindow.document.write('</body></html>');
+		printWindow.document.close();
+            printWindow.print();
     })
 </script>
 
 <script type="text/javascript">
 	$(document).on('click','#download-summary-receipt-button', function(){
-		const { jsPDF } = window.jspdf;
+		//let pdfjs = document.querySelector('#download-summary-receipt')
+		window.print();
 
-		let doc = new jsPDF(
-		'l', 'mm', [1500, 1400]);
-		let pdfjs = document.querySelector('#download-summary-receipt')
-
-		doc.html(pdfjs, {
-			callback: function(doc) {
-				doc.save("{{fee_payment.student.surname|title}}-{{fee_payment.student.last_name|title}}-Receipt.pdf");
-			},
-			x: 12,
-			y: 12
-		});
     })
 </script>
 {%endblock %}

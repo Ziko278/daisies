@@ -23,5 +23,9 @@ urlpatterns = [
     path('email/user-account-auto-send', send_user_account_auto_mail, name='user_account_auto_mail'),
     path('email/fee-reminder-auto-send', send_fee_reminder_auto_mail, name='fee_reminder_auto_mail'),
 
+    path('communication-info', CommunicationSettingView.as_view(), name='communication_info'),
+    path('communication-info/create', CommunicationSettingCreateView.as_view(), name='communication_info_create'),
+    path('communication-info/<int:pk>/update', CommunicationSettingUpdateView.as_view(), name='communication_info_update'),
+
 ]
 

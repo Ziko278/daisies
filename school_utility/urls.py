@@ -46,7 +46,8 @@ urlpatterns = [
 
     path('utility-info', SchoolUtilitySettingView.as_view(), name='utility_info'),
     path('utility-info/create', SchoolUtilitySettingCreateView.as_view(), name='utility_info_create'),
-    path('utility-info/<int:pk>/update', SchoolUtilitySettingUpdateView.as_view(), name='utility_info_update')
+    path('utility-info/<int:pk>/update', SchoolUtilitySettingUpdateView.as_view(), name='utility_info_update'),
 
+    path('dashboard', UtilityDashboardView.as_view(), name='utility_dashboard'),
 ]
 

@@ -1,7 +1,0 @@
-#s5_logo, #s5_logo_module {margin-top: 17px;}
-.s5_floating_header #s5_logo, .s5_floating_header #s5_logo_module {margin-top: 10px;margin-bottom: 10px;}
-#s5_pos_custom_3 {background:#a91d2a;}
-#s5_login_register_search_wrap {display:none;}
-@media all and (max-width: 520px) {#s5_logo img {width:40%;}}
-#s5_responsive_mobile_bar_active, #s5_responsive_mobile_drop_down_menu .current a, .s5_responsive_mobile_drop_down_inner .s5_mod_h3, .s5_responsive_mobile_drop_down_inner .s5_h3_first {color: #f1ac47 !important;}
-.s5_mobile_sidebar_h3_open span, #s5_responsive_mobile_sidebar_title_wrap_register_open, #s5_responsive_mobile_sidebar_title_wrap_login_open, #s5_responsive_mobile_sidebar a.s5_mobile_sidebar_active, #s5_responsive_mobile_sidebar .s5_mobile_sidebar_h3_open a {color: #f1ac47 !important;}

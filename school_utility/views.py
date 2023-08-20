@@ -683,3 +683,41 @@ class SchoolUtilitySettingUpdateView(LoginRequiredMixin, SuccessMessageMixin, Up
             kwargs.update({'type': self.request.user.profile.type})
         kwargs.update({'type': self.request.user.profile.type})
         return kwargs
+
+
+class UtilityDashboardView(LoginRequiredMixin, TemplateView):
+    template_name = 'school_utility/dashboard.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user_type = self.request.user.profile.type
+        school_setting = SchoolGeneralInfoModel.objects.first()
+        if school_setting.separate_school_section:
+            boarding_student = StudentsModel.objects.filter(type=user_type, is_boarding=True).count()
+            male_boarding_student = StudentsModel.objects.filter(type=user_type, is_boarding=True, gender='MALE').count()
+            female_boarding_student = StudentsModel.objects.filter(type=user_type, is_boarding=True, gender='FEMALE').count()
+            total_student = StudentsModel.objects.filter(type=user_type).count()
+            transport_student = StudentsModel.objects.filter(type=user_type, use_transport=True).count()
+            total_bed = HostelBedModel.objects.filter(type=user_type).count()
+            vacant_bed = HostelBedModel.objects.filter(type=user_type, bed_student__isnull=True).count()
+            occupied_bed = HostelBedModel.objects.filter(type=user_type, bed_student__isnull=False).count()
+
+        else:
+            boarding_student = StudentsModel.objects.filter(is_boarding=True).count()
+            male_boarding_student = StudentsModel.objects.filter(is_boarding=True, gender='MALE').count()
+            female_boarding_student = StudentsModel.objects.filter(is_boarding=True, gender='FEMALE').count()
+            total_student = StudentsModel.objects.filter().count()
+            transport_student = StudentsModel.objects.filter(use_transport=True).count()
+            total_bed = HostelBedModel.objects.count()
+            vacant_bed = HostelBedModel.objects.filter(bed_student__isnull=True).count()
+            occupied_bed = HostelBedModel.objects.filter(bed_student__isnull=False).count()
+
+        context['boarding_student'] = boarding_student
+        context['male_boarding_student'] = male_boarding_student
+        context['female_boarding_student'] = female_boarding_student
+        context['percentage_boarding_student'] = round((boarding_student/total_student) * 100) if total_student else 0
+        context['transport_student'] = transport_student
+        context['total_bed'] = total_bed
+        context['vacant_bed'] = vacant_bed
+        context['occupied_bed'] = occupied_bed
+        return context

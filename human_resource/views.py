@@ -354,3 +354,76 @@ def generate_form_view(request):
         'staff_list': staff_list
     }
     return render(request, 'human_resource/staff/generate_form.html', context)
+
+
+class HRSettingView(LoginRequiredMixin, TemplateView):
+    template_name = 'human_resource/setting/index.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        school_setting = SchoolGeneralInfoModel.objects.first()
+        form_kwargs = {}
+        if school_setting.separate_school_section:
+            hr_info = HRSettingModel.objects.filter(type=self.request.user.profile.type).first()
+            form_kwargs['type'] = self.request.user.profile.type
+        else:
+            hr_info = HRSettingModel.objects.first()
+
+        if not hr_info:
+            form = HRSettingCreateForm(**form_kwargs)
+            is_hr_info = False
+        else:
+            form = HRSettingEditForm(instance=hr_info, **form_kwargs)
+            is_hr_info = True
+        context['form'] = form
+        context['is_hr_info'] = is_hr_info
+        context['hr_info'] = hr_info
+        return context
+
+
+class HRSettingCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+    model = HRSettingModel
+    form_class = HRSettingCreateForm
+    template_name = 'human_resource/setting/index.html'
+    success_message = 'Human Resource Settings updated Successfully'
+
+    def get_success_url(self):
+        return reverse('hr_info')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        school_setting = SchoolGeneralInfoModel.objects.first()
+
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super(HRSettingCreateView, self).get_form_kwargs()
+        school_setting = SchoolGeneralInfoModel.objects.first()
+        if school_setting.separate_school_section:
+            kwargs.update({'type': self.request.user.profile.type})
+        kwargs.update({'type': self.request.user.profile.type})
+        return kwargs
+
+
+class HRSettingUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    model = HRSettingModel
+    form_class = HRSettingEditForm
+    template_name = 'human_resource/setting/index.html'
+    success_message = 'Human Resource Setting updated Successfully'
+
+    def get_success_url(self):
+        return reverse('hr_info')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super(HRSettingUpdateView, self).get_form_kwargs()
+        school_setting = SchoolGeneralInfoModel.objects.first()
+        if school_setting.separate_school_section:
+            kwargs.update({'type': self.request.user.profile.type})
+        kwargs.update({'type': self.request.user.profile.type})
+        return kwargs
+

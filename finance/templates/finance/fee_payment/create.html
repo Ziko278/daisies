@@ -718,6 +718,42 @@
                     {% endif %}
                     </div>
                     {% endfor %}
+
+		     {% for fee in one_time_fee_list %}
+                    <div class="row" style="{% if forloop.counter != 1 %} margin-top:-25px {% endif %}">
+                    {% if fee|get_fee_balance:student.id > 0 %}
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="hidden" name="fee[]" value="{{ fee.id }}" />
+                                <p class="card-title">{{ fee }}</p>
+                                <br />
+                            </div><br />
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-floating">
+                                <input type="number" name="amount[]" value="{{ fee|get_fee_balance:student.id }}" min="1" max="{{ fee|get_fee_balance:student.id }}" class="form-control" autocomplete="off" require>
+                                <label for="floatingName">Amount <span style="color:red"><b>*</b></span></label>
+                            </div><br />
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-floating">
+                                <select name="payment_mode[]" class="form-control" required>
+                                    <option value="">----------------</option>
+                                    <option value="cash">CASH</option>
+                                    <option value="cheque">CHEQUE</option>
+                                    <option value="bank">BANK TELLER</option>
+                                    <option value="transfer">BANK TRANSFER</option>
+                                </select>
+                                <label for="floatingName">Payment Mode <span style="color:red"><b>*</b></span></label>
+                                <br />
+                            </div>
+                        </div>
+                    {% endif %}
+                    </div>
+                    {% endfor %}
+
                     <div class="row" style="margin-top:30px">
                         <div class="col-md-6">
                             <div class="form-floating">

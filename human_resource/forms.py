@@ -3,7 +3,7 @@ from human_resource.models import *
 
 
 class DepartmentForm(ModelForm):
-    """"""
+    """  """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in self.fields:
@@ -21,7 +21,7 @@ class DepartmentForm(ModelForm):
 
 
 class DepartmentEditForm(ModelForm):
-    """"""
+    """  """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in self.fields:
@@ -39,7 +39,7 @@ class DepartmentEditForm(ModelForm):
 
 
 class PositionForm(ModelForm):
-    """"""
+    """  """
     def __init__(self, *args, **kwargs):
         division = False
         if 'type' in kwargs.keys():
@@ -63,7 +63,7 @@ class PositionForm(ModelForm):
 
 
 class PositionEditForm(ModelForm):
-    """"""
+    """  """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in self.fields:
@@ -81,7 +81,7 @@ class PositionEditForm(ModelForm):
 
 
 class StaffForm(ModelForm):
-    """"""
+    """  """
     def __init__(self, *args, **kwargs):
         division = False
         if 'type' in kwargs.keys():
@@ -116,8 +116,9 @@ class StaffForm(ModelForm):
         }
 
 
+
 class StaffEditForm(ModelForm):
-    """"""
+    """  """
     def __init__(self, *args, **kwargs):
         division = False
         if 'type' in kwargs.keys():
@@ -151,3 +152,54 @@ class StaffEditForm(ModelForm):
             })
         }
 
+
+class HRSettingCreateForm(ModelForm):
+    """  """
+    def __init__(self, *args, **kwargs):
+        division = False
+        if 'type' in kwargs.keys():
+            division = kwargs.pop('type')
+
+        super().__init__(*args, **kwargs)
+        if division:
+            pass
+        for field in self.fields:
+            if 0:
+                self.fields[field].widget.attrs.update({
+                    'class': 'form-control',
+                    'autocomplete': 'off'
+                })
+
+    class Meta:
+        model = HRSettingModel
+        fields = '__all__'
+
+        widgets = {
+
+        }
+
+
+class HRSettingEditForm(ModelForm):
+    """"""
+    def __init__(self, *args, **kwargs):
+        division = False
+        if 'type' in kwargs.keys():
+            division = kwargs.pop('type')
+
+        super().__init__(*args, **kwargs)
+        if division:
+            pass
+        for field in self.fields:
+            if 0:
+                self.fields[field].widget.attrs.update({
+                    'class': 'form-control',
+                    'autocomplete': 'off'
+                })
+
+    class Meta:
+        model = HRSettingModel
+        exclude = ['type', 'user']
+
+        widgets = {
+
+        }

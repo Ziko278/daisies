@@ -22,6 +22,7 @@ from finance.models import *
 import paystack
 from paystack.error import APIError
 from finance.forms import *
+from django.db.models import Q
 
 
 class FeeCreateView(LoginRequiredMixin, PermissionRequiredMixin, SuccessMessageMixin, CreateView):
@@ -781,11 +782,10 @@ class FeePaymentCreateView(SuccessMessageMixin, CreateView):
                                                                 fee__fee_occurrence='termly',
                                                                 student_class__in=[student_class.id],
                                                                 class_section__in=[class_section.id])
-
                 one_time_fee_list = FeeMasterModel.objects.filter(type=self.request.user.profile.type,
                                                                 student_class__in=[student_class.id],
-                                                                class_section__in=[class_section.id]).exclude(
-                    fee__fee_occurrence='termly')
+                                                                class_section__in=[class_section.id]).exclude(fee__fee_occurrence='termly').filter(
+							        Q(fee__payment_term='any term') | Q(fee__payment_term=academic_setting.term))
             else:
                 termly_fee_list = []
                 one_time_fee_list = []
@@ -796,9 +796,10 @@ class FeePaymentCreateView(SuccessMessageMixin, CreateView):
                 termly_fee_list = FeeMasterModel.objects.filter(fee__fee_occurrence='termly',
                                                                 student_class__in=[student_class.id],
                                                                 class_section__in=[class_section.id])
-                one_time_fee_list = FeeMasterModel.objects.exclude(fee__fee_occurrence='termly',
-                                                                student_class__in=[student_class.id],
-                                                                class_section__in=[class_section.id])
+                one_time_fee_list = FeeMasterModel.objects.filter(student_class__in=[student_class.id],
+                                                                class_section__in=[class_section.id]).exclude(fee__fee_occurrence='termly').filter(
+                                                                Q(fee__payment_term='any term') | Q(fee__payment_term=academic_setting.term))
+
             else:
                 termly_fee_list = []
                 one_time_fee_list = []
@@ -823,15 +824,13 @@ class FeePaymentCreateView(SuccessMessageMixin, CreateView):
             fee_balance += get_fee_balance(fee_master, student.id)
 
         for fee_master in one_time_fee_list:
-            if fee_master.same_termly_price:
+            if fee_master.fee.payment_term == 'any term':
+                amount = fee_master.amount
+            elif fee_master.fee.payment_term == academic_setting.term:
                 amount = fee_master.amount
             else:
-                if academic_setting.term == '1st term':
-                    amount = fee_master.first_term_amount
-                elif academic_setting.term == '2nd term':
-                    amount = fee_master.second_term_amount
-                elif academic_setting.term == '3rd term':
-                    amount = fee_master.third_term_amount
+                amount = 0
+
             current_fee += amount
             fee_paid += get_amount_paid(fee_master, student.id)
             fee_discount += get_fee_discount(fee_master, student.id)
@@ -1739,7 +1738,12 @@ class IncomeListView(ListView):
         context = super().get_context_data(**kwargs)
         session_id = self.request.GET.get('session')
         context['current_session'] = SessionModel.objects.get(pk=session_id)
-        context['session_list'] = SessionModel.objects.all()
+        school_setting = SchoolGeneralInfoModel.objects.first()
+        if school_setting.separate_school_section:
+            context['session_list'] = SessionModel.objects.filter(type=self.request.user.profile.type)
+        else:
+            context['session_list'] = SessionModel.objects.all()
+
         context['term'] = self.request.GET.get('term')
         return context
 
@@ -2079,6 +2083,8 @@ class FeeDashboardView(LoginRequiredMixin, TemplateView):
             current_term = False
             if fee_record:
                 has_record = True
+            else:
+                has_record = False
         current_day = 7
         start_date = datetime.now() + timedelta(days=1)
         date_list, transaction_list = [], []
@@ -2097,12 +2103,66 @@ class FeeDashboardView(LoginRequiredMixin, TemplateView):
             transaction_list.append(transaction)
 
             current_day -= 1
+
+        total_expected_fee = 0
+        if school_setting.separate_school_section:
+            class_list = ClassSectionInfoModel.objects.filter(type=self.request.user.profile.type)
+        else:
+            class_list = ClassSectionInfoModel.objects.all()
+        for a_class in class_list:
+            student_class = a_class.student_class
+            class_section = a_class.section
+            number_of_student = StudentsModel.objects.filter(student_class=student_class, class_section=class_section).count()
+
+            if school_setting.separate_school_section:
+                fee_master_list = FeeMasterModel.objects.filter(type=self.request.user.profile.type,
+                                                                student_class__in=[student_class.id],
+                                                                class_section__in=[class_section.id])
+            else:
+                fee_master_list = FeeMasterModel.objects.filter(student_class__in=[student_class.id],
+                                                                class_section__in=[class_section.id])
+            for fee_master in fee_master_list:
+                if fee_master.fee.fee_occurrence == 'termly':
+                    if fee_master.same_termly_price:
+                        amount = fee_master.amount
+                    else:
+                        if term == '1st term':
+                            amount = fee_master.first_term_amount
+                        elif term == '2nd term':
+                            amount = fee_master.second_term_amount
+                        elif term == '3rd term':
+                            amount = fee_master.third_term_amount
+                    total_expected_fee += amount * number_of_student
+                else:
+                    if fee_master.fee.payment_term == term or fee_master.fee.payment_term == 'any term':
+                        total_expected_fee += fee_master.amount * number_of_student
+
+        total_paid_fee = FeePaymentModel.objects.filter(term=term, session=session, status='confirmed').aggregate(
+                Sum('amount'))['amount__sum']
+        total_paid_fee = total_paid_fee if total_paid_fee else 0
+
+        class_fee_payment_list = {}
+        for class_info in class_list:
+            fee_paid = FeePaymentModel.objects.filter(session=session, term=term, status='confirmed',
+                                                      student__student_class=class_info.student_class,
+                                                      ).aggregate(Sum('amount'))[
+                'amount__sum']
+
+            if fee_paid is None:
+                fee_paid = 0
+            class_name = "{} {}".format(class_info.student_class.name.upper(), class_info.section.name.upper())
+            class_fee_payment_list[class_name] = fee_paid
+
         context['date_list'] = date_list
         context['transaction_list'] = transaction_list
         context['has_record'] = has_record
         context['fee_payment_list'] = fee_payment_list
+        context['class_fee_payment_list'] = class_fee_payment_list
         context['current_term'] = current_term
         context['fee_record'] = fee_record
+        context['fee_paid'] = total_paid_fee
+        context['total_expected_fee'] = total_expected_fee
+        context['fee_balance'] = total_expected_fee - total_paid_fee
         context['fee_record_list'] = FeeRecordModel.objects.filter(type=self.request.user.profile.type).order_by('id').reverse()[:15]
 
         return context
@@ -2116,8 +2176,87 @@ class FinanceDashboardView(LoginRequiredMixin, TemplateView):
         session_id = self.request.GET.get('session')
         session = SessionModel.objects.get(pk=session_id)
         term = self.request.GET.get('term')
+        context['current_session'] = SessionModel.objects.get(pk=session_id)
+        context['session_list'] = SessionModel.objects.all()
+        context['term'] = term
+        context['session'] = session
+        school_setting = SchoolGeneralInfoModel.objects.first()
+
+        if school_setting.separate_school_section:
+            academic_setting = SchoolAcademicInfoModel.objects.filter(type=self.request.user.profile.type).first()
+            fee_paid = FeePaymentModel.objects.filter(session=session, term=term, status='confirmed',
+                                                      type=self.request.user.profile.type).aggregate(Sum('amount'))[
+                'amount__sum']
+            total_income = IncomeModel.objects.filter(session=session, term=term,
+                                                      type=self.request.user.profile.type).aggregate(Sum('amount'))[
+                'amount__sum']
+            total_expense = ExpenseModel.objects.filter(session=session, term=term,
+                                                      type=self.request.user.profile.type).aggregate(Sum('amount'))[
+                'amount__sum']
+            income_category_list = IncomeCategoryModel.objects.filter(type=self.request.user.profile.type)
+            expense_category_list = ExpenseCategoryModel.objects.filter(type=self.request.user.profile.type)
+        else:
+            academic_setting = SchoolAcademicInfoModel.objects.first()
+            fee_paid = FeePaymentModel.objects.filter(session=session, term=term, status='confirmed').aggregate(Sum('amount'))[
+                'amount__sum']
+            total_income = IncomeModel.objects.filter(session=session, term=term,
+                                                      ).aggregate(Sum('amount'))[
+                'amount__sum']
+            total_expense = ExpenseModel.objects.filter(session=session, term=term,
+                                                        ).aggregate(Sum('amount'))[
+                'amount__sum']
+            income_category_list = IncomeCategoryModel.objects.all()
+            expense_category_list = ExpenseCategoryModel.objects.all()
+        fee_paid = fee_paid if fee_paid else 0
+        total_income = total_income if total_income else 0
+        total_expense = total_expense if total_expense else 0
+
+        income_list = {}
+        for category in income_category_list:
+            income_paid = IncomeModel.objects.filter(session=session, term=term, category=category).aggregate(Sum('amount'))[
+                'amount__sum']
+
+            income_paid = income_paid if income_paid else 0
+            income_list[category.name.upper()] = income_paid
+
+        expense_list = {}
+        for category in expense_category_list:
+            expense_paid = ExpenseModel.objects.filter(session=session, term=term, category=category).aggregate(Sum('amount'))[
+                'amount__sum']
+
+            expense_paid = expense_paid if expense_paid else 0
+            expense_list[category.name.upper()] = expense_paid
+
         context['current_session'] = session
         context['session_list'] = SessionModel.objects.all()
         context['term'] = term
+        context['fee_paid'] = fee_paid
+        context['other_income'] = total_income
+        context['total_income'] = total_income + fee_paid
+        context['total_expense'] = total_expense
+        context['gross'] = fee_paid + total_income - total_expense
+        context['income_list'] = income_list
+        context['expense_list'] = expense_list
 
         return context
+
+
+def print_finance_receipt(request, pk, receipt_type):
+    if receipt_type == 'detailed_fee_payment':
+        fee_payment = FeePaymentSummaryModel.objects.get(pk=pk)
+        context = {
+            'fee_payment': fee_payment,
+            'amount_in_word': num2words(fee_payment.amount)
+        }
+        return render(request, 'finance/print/detailed_receipt.html', context)
+
+    if receipt_type == 'summary_fee_payment':
+        fee_payment = FeePaymentSummaryModel.objects.get(pk=pk)
+        context = {
+            'fee_payment': fee_payment,
+            'amount_in_word': num2words(fee_payment.amount)
+        }
+        return render(request, 'finance/print/summary_receipt.html', context)
+
+    messages.error(request, 'Invalid Receipt, Could not Print')
+    return redirect(request.META.get('HTTP_REFERER', reverse('dashboard')))

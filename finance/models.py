@@ -313,7 +313,7 @@ class FeePaymentModel(models.Model):
     payment_mode = models.CharField(max_length=20, choices=PAYMENT_MODE)
     METHOD = (('paystack', 'PAYSTACK'), ('flutterwave', 'FLUTTERWAVE'))
     online_payment_method = models.CharField(max_length=100, choices=METHOD, null=True, blank=True)
-    vat = models.FloatField(default=0)
+    vat = models.FloatField(default=0, blank=True, null=True)
     date = models.DateField(default=date.today(), blank=True)
     payment_proof = models.FileField(blank=True, null=True, upload_to='finance/fee_payment')
     amount = models.FloatField()

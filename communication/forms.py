@@ -3,7 +3,7 @@ from communication.models import *
 
 
 class SMTPConfigurationForm(ModelForm):
-    """"""
+    """  """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in self.fields:
@@ -23,7 +23,7 @@ class SMTPConfigurationForm(ModelForm):
 
 
 class SMTPConfigurationEditForm(ModelForm):
-    """"""
+    """  """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -44,7 +44,7 @@ class SMTPConfigurationEditForm(ModelForm):
 
 
 class SMSConfigurationForm(ModelForm):
-    """"""
+    """  """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -63,7 +63,7 @@ class SMSConfigurationForm(ModelForm):
 
 
 class SMSConfigurationEditForm(ModelForm):
-    """"""
+    """  """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -82,7 +82,7 @@ class SMSConfigurationEditForm(ModelForm):
 
 
 class MessageForm(ModelForm):
-    """"""
+    """  """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -101,7 +101,7 @@ class MessageForm(ModelForm):
 
 
 class MessageEditForm(ModelForm):
-    """"""
+    """  """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in self.fields:
@@ -119,7 +119,7 @@ class MessageEditForm(ModelForm):
 
 
 class SentMessageForm(ModelForm):
-    """"""
+    """  """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -138,7 +138,7 @@ class SentMessageForm(ModelForm):
 
 
 class SentMessageEditForm(ModelForm):
-    """"""
+    """  """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in self.fields:
@@ -154,4 +154,56 @@ class SentMessageEditForm(ModelForm):
 
         }
 
+
+
+class CommunicationSettingCreateForm(ModelForm):
+    """  """
+    def __init__(self, *args, **kwargs):
+        division = False
+        if 'type' in kwargs.keys():
+            division = kwargs.pop('type')
+
+        super().__init__(*args, **kwargs)
+        if division:
+            pass
+        for field in self.fields:
+            if field != 'auto_save_sent_message':
+                self.fields[field].widget.attrs.update({
+                    'class': 'form-control',
+                    'autocomplete': 'off'
+                })
+
+    class Meta:
+        model = CommunicationSettingModel
+        fields = '__all__'
+
+        widgets = {
+
+        }
+
+
+class CommunicationSettingEditForm(ModelForm):
+    """  """
+    def __init__(self, *args, **kwargs):
+        division = False
+        if 'type' in kwargs.keys():
+            division = kwargs.pop('type')
+
+        super().__init__(*args, **kwargs)
+        if division:
+            pass
+        for field in self.fields:
+            if field != 'auto_save_sent_message':
+                self.fields[field].widget.attrs.update({
+                    'class': 'form-control',
+                    'autocomplete': 'off'
+                })
+
+    class Meta:
+        model = CommunicationSettingModel
+        exclude = ['type', 'user']
+
+        widgets = {
+
+        }
 

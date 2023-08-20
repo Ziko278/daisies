@@ -97,12 +97,18 @@ def group_permission_view(request, pk):
     group = Group.objects.get(pk=pk)
     if request.method == 'POST':
         permissions = request.POST.getlist('permissions[]')
-        group.permissions.set(permissions)
+        permission_list = []
+        for permission_code in permissions:
+            permission = Permission.objects.filter(codename=permission_code).first()
+            if permission:
+                permission_list.append(permission.id)
+        group.permissions.set(permission_list)
         messages.success(request, 'Group Permission Successfully Updated')
         return redirect(reverse('group_index'))
     context = {
         'group': group,
-        'permission_list': Permission.objects.all()
+        'permission_codenames': group.permissions.all().values_list('codename', flat=True),
+        'permission_list': Permission.objects.all(),
 
     }
     return render(request, 'school_setting/group/permission.html', context)

@@ -6,9 +6,10 @@
     <div class="card">
         <div class="card-body">
             <h4 class="card-title">ACTIONS:
-                <a title="Edit Parent" href="{% url 'parent_edit' parent.id %}" class="btn btn-primary"><i class="bi bi-pencil-square"></i></a>
+                <a title="Edit Parent" href="{% url 'parent_edit' parent.id %}" class="btn btn-warning"><i class="bi bi-pencil-square"></i></a>
                 <a title="Register Parent Ward" href="{% url 'student_create' parent.id %}" class="btn btn-info"><i class="bx bxs-user-plus"></i></a>
                 <a title="Delete Parent" href="{% url 'parent_delete' parent.id %}" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+		<a title="Go Back" onclick="window.history.back()" class="btn btn-danger"><i class="bi bi-arrow-left"></i></a>
             </h4>
         </div>
     </div>
@@ -80,8 +81,8 @@
                     <p class="card-title"> WORK INFORMATION </p>
                     <div class="row">
                         <div class="col-md-12">
-                            <p>Occupation : <i><b>{% if parent.occupation %} {{ parent.occupation }} {% else %} Not Provided {% endif %}</b></i></p>
-                            <p>Office Address : <i><b>{% if parent.office_address%} {{ parent.office_address }} {% else %} Not Provided {% endif %}</b></i></p>
+                            <p>Occupation : <i><b>{% if parent.occupation %} {{ parent.occupation|title }} {% else %} Not Provided {% endif %}</b></i></p>
+                            <p>Office Address : <i><b>{% if parent.office_address%} {{ parent.office_address|title }} {% else %} Not Provided {% endif %}</b></i></p>
                             <p>Office Mobile : <i><b>{% if parent.office_mobile %} {{ parent.office_mobile}} {% else %} Not Provided {% endif %}</b></i></p>
                         </div>
                     </div>

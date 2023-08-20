@@ -584,3 +584,74 @@ def send_user_password_reset_mail(request, email, full_name, default_password, u
         return e
 
 
+
+class CommunicationSettingView(LoginRequiredMixin, TemplateView):
+    template_name = 'communication/setting/index.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        school_setting = SchoolGeneralInfoModel.objects.first()
+        form_kwargs = {}
+        if school_setting.separate_school_section:
+            communication_info = CommunicationSettingModel.objects.filter(type=self.request.user.profile.type).first()
+            form_kwargs['type'] = self.request.user.profile.type
+        else:
+            communication_info = CommunicationSettingModel.objects.first()
+
+        if not communication_info:
+            form = CommunicationSettingCreateForm(**form_kwargs)
+            is_communication_info = False
+        else:
+            form = CommunicationSettingEditForm(instance=communication_info, **form_kwargs)
+            is_communication_info = True
+        context['form'] = form
+        context['is_communication_info'] = is_communication_info
+        context['communication_info'] = communication_info
+        return context
+
+
+class CommunicationSettingCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+    model = CommunicationSettingModel
+    form_class = CommunicationSettingCreateForm
+    template_name = 'communication/setting/index.html'
+    success_message = 'Communication Settings updated Successfully'
+
+    def get_success_url(self):
+        return reverse('finance_info')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        school_setting = SchoolGeneralInfoModel.objects.first()
+
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super(CommunicationSettingCreateView, self).get_form_kwargs()
+        school_setting = SchoolGeneralInfoModel.objects.first()
+        if school_setting.separate_school_section:
+            kwargs.update({'type': self.request.user.profile.type})
+        kwargs.update({'type': self.request.user.profile.type})
+        return kwargs
+
+
+class CommunicationSettingUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    model = CommunicationSettingModel
+    form_class = CommunicationSettingEditForm
+    template_name = 'communication/setting/index.html'
+    success_message = 'Communication Setting updated Successfully'
+
+    def get_success_url(self):
+        return reverse('communication_info')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super(CommunicationSettingUpdateView, self).get_form_kwargs()
+        school_setting = SchoolGeneralInfoModel.objects.first()
+        if school_setting.separate_school_section:
+            kwargs.update({'type': self.request.user.profile.type})
+        kwargs.update({'type': self.request.user.profile.type})
+        return kwargs

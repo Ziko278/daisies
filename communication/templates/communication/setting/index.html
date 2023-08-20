@@ -1,0 +1,124 @@
+{% extends 'admin_dashboard/layout.html' %}
+{% load static %}
+{% load humanize %}
+{% block 'main' %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="row" style="margin-bottom:10px">
+            <h3><b><span class="text-info">COMMUNICATION SETTING DETAIL</span></b>
+                <button style="float:right;width:120px" type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#verticalycentered">Edit Info</button>
+            </h3>
+        </div>
+        {% if form.errors %}
+        <h5 class="text-danger">{{form.errors}}</h5>
+        {% endif %}
+
+        <div class="row">
+            <div class="col-xxl-4 col-md-6">
+                <div class="card info-card customers-card">
+                    <div class="card-body">
+                        <h5 class="card-title"></h5>
+                        <div class="d-flex align-items-center">
+                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                <i class="bi bi-calendar-check-fill"></i>
+                            </div>
+
+                            <div class="ps-3">
+                                <h6>{% if communication_info.default_smtp %} {{ communication_info.default_smtp|lower }} {% endif %}</h6>
+                                <span class="text-muted small pt-2 ps-1">Default Email Account</span>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xxl-4 col-md-6">
+                <div class="card info-card customers-card">
+                    <div class="card-body">
+                        <h5 class="card-title"></h5>
+                        <div class="d-flex align-items-center">
+                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                <i class="bi bi-flag"></i>
+                            </div>
+
+                            <div class="ps-3">
+                                <h6>{% if communication_info.default_sms %} {{ communication_info.default_sms|lower }} {% endif %}</h6>
+                                <span class="text-muted small pt-2 ps-1">Default SMS Account</span>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xxl-4 col-md-6">
+                <div class="card info-card customers-card">
+                    <div class="card-body">
+                        <h5 class="card-title"></h5>
+                        <div class="d-flex align-items-center">
+                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                <i class="bi bi-file-earmark-lock2-fill"></i>
+                            </div>
+
+                            <div class="ps-3">
+                                <h6>{% if communication_info.auto_save_sent_message %} YES {% else %} NO {% endif %}</h6>
+                                <span class="text-muted small pt-2 ps-1">Save Sent Message</span>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<form method="POST" {% if is_communication_info %} action="{% url 'communication_info_update' communication_info.id %}" {% else %} action="{% url 'communication_info_create' %}" {% endif %} enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="modal fade" id="verticalycentered" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Communication Setting Info</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body row">
+                    <div class="col-6">
+                        <input type="hidden" name="type" value="{{ user.profile.type }}" />
+                        <input type="hidden" name="user" value="{{ user.id }}" />
+                        <input type="hidden" name="updated_by" value="{{ user.id }}" />
+
+                        <div class="form-floating">
+                            {{ form.default_smtp }}
+                            <label for="floatingName">Default Email Account </label>
+                        </div><br />
+                    </div>
+
+                    <div class="col-6">
+                        <div class="form-floating">
+                            {{ form.default_sms }}
+                            <label for="floatingName">Default SMS Account </label>
+                        </div><br />
+                    </div>
+
+                    <div class="col-6">
+                        <div class="form-floating">
+                            {{ form.auto_save_sent_message }}
+                            <label for="floatingName">Auto Save Sent Message </label>
+                        </div><br />
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+{% endblock %}

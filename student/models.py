@@ -22,8 +22,8 @@ def generate_barcode(identifier):
 class ParentsModel(models.Model):
     """"""
     TITLE = (
-        ('MR', 'MR'), ('MRS', 'MRS'), ('MISS', 'MISS'), ('MS', 'MS'), ('MAL', 'MAL'), ('DOC', 'DOC'),
-        ('BARR', 'BARR'), ('PST', 'PST'), ('PROF', 'PROF'),  ('ENGR', 'ENGR'),
+        ('MR', 'MR'), ('MRS', 'MRS'), ('MISS', 'MISS'), ('MS', 'MS'), ('MALLAM', 'MALLAM'), ('DOC', 'DOC'),
+        ('BARR', 'BARR'), ('PST', 'PST'), ('PROF', 'PROF'),  ('ENGR', 'ENGR'), ('ALHAJI', 'ALHAJI'), ('HAJIYAH', 'HAJIYAH')
     )
     title = models.CharField(max_length=10, choices=TITLE)
     surname = models.CharField(max_length=50)
@@ -121,7 +121,8 @@ class ParentsModel(models.Model):
         else:
             user_profile = UserProfileModel.objects.get(parent_id=self.id)
             user = user_profile.user
-            user.email = self.email
+            if user.email:
+                user.email = self.email
             user.save()
 
             self.group.user_set.add(user)
@@ -255,7 +256,8 @@ class StudentsModel(models.Model):
         else:
             user_profile = UserProfileModel.objects.get(student_id=self.id)
             user = user_profile.user
-            user.email = self.email
+            if user.email:
+                user.email = self.email
             user.save()
 
             self.group.user_set.add(user)

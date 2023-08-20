@@ -24,7 +24,9 @@
             <div class="card-body">
                 <h5 class="card-title">Student Attendance For {{ class_info }} - {{ date|date }}
                     ({{ academic_info.session }} Session / {{ academic_info.term|title }})</h5>
-                <table class="table table-striped">
+        	<h5 class="card-title" style="margin-top:-20px">Total: {{ total_attendance }} | Present: {{ present_attendance }} |
+                Late: {{ late_attendance }} | Absent: {{ absent_attendance }}</h5>  
+	      <table class="table table-striped">
                     <thead>
                         <tr>
                             <th scope="col">#</th>
@@ -42,7 +44,7 @@
                                 {{ student|title }}
                                 <input type="hidden" name="students[]" value="{{student.id}}">
                             </td>
-                            <td></td>
+                            <td>{{ student.class_number }}</td>
                             <td colspan="3" class="text-center">
                                 {% if student|check_student_attendance:date == 'present' %} <span class="text-success">Present </span> {% endif %}
                                 {% if student|check_student_attendance:date == 'late' %} <span class="text-warning">Late </span>  {% endif %}

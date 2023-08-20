@@ -41,6 +41,8 @@ class SchoolAcademicInfoModel(models.Model):
 class SchoolGeneralInfoModel(models.Model):
     name = models.CharField(max_length=250)
     short_name = models.CharField(max_length=50)
+    website = models.CharField(max_length=200)
+    motto = models.CharField(max_length=250)
     SCHOOL_TYPE = (
         ('pri', 'PRIMARY'), ('sec', 'SECONDARY'), ('mix', 'MIXED')
     )

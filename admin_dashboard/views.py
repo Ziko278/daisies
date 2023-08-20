@@ -50,14 +50,14 @@ class AdminDashboardView(LoginRequiredMixin, TemplateView):
             context['notification_list'] = RecentActivityModel.objects.filter(session=session, term=term,
                                            type=type).order_by('id').reverse()[:15]
             context['attendance_record_list'] = StudentClassAttendanceRecordModel.objects.filter(session=session,
-                                          term=term, type=type).order_by('id')[:7]
+                                          term=term, type=type).order_by('date')[:7]
             context['student_class_list'] = ClassSectionInfoModel.objects.filter(type=type)
             context['fee_list'] = FeeModel.objects.filter(type=type)
         else:
             context['notification_list'] = RecentActivityModel.objects.filter(session=session, term=term).order_by(
                 'id').reverse()[:15]
             context['attendance_record_list'] = StudentClassAttendanceRecordModel.objects.filter(session=session,
-                                                term=term).order_by('id')[:7]
+                                                term=term).order_by('date')[:7]
             context['student_class_list'] = ClassSectionInfoModel.objects.all()
             context['fee_list'] = FeeModel.objects.all()
         return context

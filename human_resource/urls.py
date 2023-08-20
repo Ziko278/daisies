@@ -20,5 +20,9 @@ urlpatterns = [
     path('staff/<int:pk>/delete', StaffDeleteView.as_view(), name='staff_delete'),
     path('staff/generate-form', generate_form_view, name='staff_form'),
 
+
+    path('setting', HRSettingView.as_view(), name='hr_info'),
+    path('setting/create', HRSettingCreateView.as_view(), name='hr_info_create'),
+    path('setting/<int:pk>/update', HRSettingUpdateView.as_view(), name='hr_info_update'),
 ]
 

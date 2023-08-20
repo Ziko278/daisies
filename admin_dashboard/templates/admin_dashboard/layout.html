@@ -183,7 +183,7 @@
         </ul>
       </li>
 
-      <li class="nav-item">
+	<li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#sb_att" data-bs-toggle="collapse" href="#">
           <i class="bi bi-alarm"></i><span>ATTENDANCE</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
@@ -191,6 +191,12 @@
           <li>
             <a href="{% url 'take_daily_attendance' %}">
               <i class="bi bi-circle"></i><span>School Attendance</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'check_general_attendance_select_date' %}">
+              <i class="bi bi-circle"></i><span>Check School Attendance</span>
             </a>
           </li>
 
@@ -207,7 +213,6 @@
 
         </ul>
       </li>
-
 
       <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#acad" data-bs-toggle="collapse" href="#">
@@ -506,7 +511,12 @@
               <i class="bi bi-circle"></i><span>SMS Accounts</span>
             </a>
           </li>
-
+	
+  	 <li>
+            <a href="{% url 'communication_info' %}">
+              <i class="bi bi-circle"></i><span>Communication Settings</span>
+            </a>
+          </li>
         </ul>
       </li>
 
@@ -540,7 +550,11 @@
             </a>
           </li>
 
-
+	   <li>
+            <a href="{% url 'hr_info' %}">
+              <i class="bi bi-circle"></i><span>Setting</span>
+            </a>
+          </li>
         </ul>
       </li>
 
@@ -688,7 +702,13 @@
           <i class="bi bi-house-door-fill"></i><span>UTILITY</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
         <ul id="hostel" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-          <li>
+	<li>
+            <a href="{% url 'utility_dashboard' %}">
+              <i class="bi bi-circle"></i><span>Dashboard</span>
+            </a>
+          </li>
+ 
+         <li>
             <a href="{% url 'hostel_bed_index' %}">
               <i class="bi bi-circle"></i><span>Hostel Bed</span>
             </a>
@@ -726,36 +746,6 @@
         </ul>
       </li>
 
-      <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#frontend" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-house-door-fill"></i><span>FRONT END</span><i class="bi bi-chevron-down ms-auto"></i>
-        </a>
-        <ul id="frontend" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-          <li>
-            <a href="{% url 'hostel_bed_index' %}">
-              <i class="bi bi-circle"></i><span>Setting</span>
-            </a>
-          </li>
-
-          <li>
-            <a href="{% url 'select_frontend_template' %}">
-              <i class="bi bi-circle"></i><span>Select Template</span>
-            </a>
-          </li>
-
-          <li>
-            <a href="{% url 'utility_info' %}">
-              <i class="bi bi-circle"></i><span>Front End Data</span>
-            </a>
-          </li>
-
-          <li>
-            <a href="{% url 'frontend_slider_index' %}">
-              <i class="bi bi-circle"></i><span>HomePage Sliders</span>
-            </a>
-          </li>
-        </ul>
-      </li>
 
       <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#tables-nav" data-bs-toggle="collapse" href="#">

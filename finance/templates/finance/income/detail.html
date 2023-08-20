@@ -4,10 +4,10 @@
 {% block 'main' %}
 <div class="card">
     <div class="card-body ">
-        <h5 class="card-title">Actions</h5>
+        <h5 class="card-title">Actions/h5>
         <a title="Edit Income" href="{% url 'income_edit' income.id %}" class="btn btn-outline-warning"><i class="bi bi-pencil-square"></i></a>
         <a title="Delete Income" href="{% url 'income_delete' income.id %}" class="btn btn-outline-danger"><i class="bi bi-trash"></i></a>
-        <a title="View All Incomes" href="{% url 'income_index' %}" class="btn btn-outline-primary"><i class="bi bi-menu-down"></i></a>
+        <a title="View All Incomes" href="{% url 'income_index' %}?session={{income.session.id}}&term={{income.term}}" class="btn btn-outline-primary"><i class="bi bi-menu-down"></i></a>
     </div>
 </div>
 

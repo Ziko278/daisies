@@ -16,6 +16,7 @@ from school_setting.models import *
 from django.apps import apps
 from student.models import *
 from student.forms import *
+from finance.templatetags.fee_custom_filters import *
 
 
 class ParentCreateView(LoginRequiredMixin, PermissionRequiredMixin, SuccessMessageMixin, CreateView):
@@ -194,6 +195,101 @@ class StudentDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView)
             if session_result.session not in student_session_list:
                 student_session_list.append(session_result.session)
         context['student_session_list'] = student_session_list
+        student = self.object
+        student_class = student.student_class
+        class_section = student.class_section
+        school_setting = SchoolGeneralInfoModel.objects.first()
+        if school_setting.separate_school_section:
+            academic_setting = SchoolAcademicInfoModel.objects.filter(type=self.request.user.profile.type).first()
+            fee_setting = FinanceSettingModel.objects.filter(type=self.request.user.profile.type).first()
+            if student_class and class_section:
+                termly_fee_list = FeeMasterModel.objects.filter(type=self.request.user.profile.type,
+                                                                fee__fee_occurrence='termly',
+                                                                student_class__in=[student_class.id],
+                                                                class_section__in=[class_section.id])
+
+                one_time_fee_list = FeeMasterModel.objects.filter(type=self.request.user.profile.type,
+                                                                  student_class__in=[student_class.id],
+                                                                  class_section__in=[class_section.id]).exclude(
+                    fee__fee_occurrence='termly')
+            else:
+                termly_fee_list = []
+                one_time_fee_list = []
+        else:
+            academic_setting = SchoolAcademicInfoModel.objects.first()
+            fee_setting = FinanceSettingModel.objects.first()
+            if student_class and class_section:
+                termly_fee_list = FeeMasterModel.objects.filter(fee__fee_occurrence='termly',
+                                                                student_class__in=[student_class.id],
+                                                                class_section__in=[class_section.id])
+                one_time_fee_list = FeeMasterModel.objects.exclude(fee__fee_occurrence='termly',
+                                                                   student_class__in=[student_class.id],
+                                                                   class_section__in=[class_section.id])
+            else:
+                termly_fee_list = []
+                one_time_fee_list = []
+        current_payment_list = FeePaymentModel.objects.filter(student=student, session=academic_setting.session)
+        all_payment_list = FeePaymentModel.objects.filter(student=student)
+        outstanding_payment_list = OutstandingFeeModel.objects.filter(student=student, status='active')
+        current_fee, fee_paid, fee_discount, fee_penalty, fee_balance, outstanding_fee = 0, 0, 0, 0, 0, 0
+        for fee_master in termly_fee_list:
+            if fee_master.same_termly_price:
+                amount = fee_master.amount
+            else:
+                if academic_setting.term == '1st term':
+                    amount = fee_master.first_term_amount
+                elif academic_setting.term == '2nd term':
+                    amount = fee_master.second_term_amount
+                elif academic_setting.term == '3rd term':
+                    amount = fee_master.third_term_amount
+            current_fee += amount
+            fee_paid += get_amount_paid(fee_master, student.id)
+            fee_discount += get_fee_discount(fee_master, student.id)
+            fee_penalty += get_fee_penalty(fee_master, student.id)
+            fee_balance += get_fee_balance(fee_master, student.id)
+
+        for fee_master in one_time_fee_list:
+            if fee_master.fee.payment_term == 'any term':
+                amount = fee_master.amount
+            elif fee_master.fee.payment_term == academic_setting.term:
+                amount = fee_master.amount
+            else:
+                amount = 0
+
+            current_fee += amount
+            fee_paid += get_amount_paid(fee_master, student.id)
+            fee_discount += get_fee_discount(fee_master, student.id)
+            fee_penalty += get_fee_penalty(fee_master, student.id)
+            fee_balance += get_fee_balance(fee_master, student.id)
+
+        for fee in outstanding_payment_list:
+            if fee.balance:
+                outstanding_fee += fee.balance
+
+        ClassAttendanceModel = apps.get_model('attendance', 'StudentClassAttendanceModel')
+        class_attendance = ClassAttendanceModel.objects.filter(student=student, session=academic_setting.session,
+                                                               term=academic_setting.term).first()
+
+        context['academic_setting'] = academic_setting
+        context['fee_setting'] = fee_setting
+        context['student'] = student
+        context['termly_fee_list'] = termly_fee_list
+        context['one_time_fee_list'] = one_time_fee_list
+        context['current_payment_list'] = current_payment_list
+        context['all_payment_list'] = all_payment_list
+        context['outstanding_payment_list'] = outstanding_payment_list
+        context['current_fee'] = current_fee
+        context['fee_paid'] = fee_paid
+        context['fee_discount'] = fee_discount
+        context['fee_penalty'] = fee_penalty
+        context['fee_balance'] = fee_balance
+        context['outstanding_fee'] = outstanding_fee
+        context['total_fee'] = outstanding_fee + fee_balance
+        if current_fee:
+            context['percentage_paid'] = round(((current_fee - fee_balance) / current_fee) * 100)
+        else:
+            context['percentage_paid'] = 0
+        context['class_attendance'] = class_attendance
         return context
 
 

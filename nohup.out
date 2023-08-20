@@ -1,0 +1,228 @@
+Watching for file changes with StatReloader
+Performing system checks...
+
+System check identified some issues:
+
+WARNINGS:
+finance.ExpenseModel.date: (fields.W161) Fixed default value provided.
+	HINT: It seems you set a fixed date / time / datetime value as default for this field. This may not be what you want. If you want to have the current date as default, use `django.utils.timezone.now`
+finance.FeePaymentModel.date: (fields.W161) Fixed default value provided.
+	HINT: It seems you set a fixed date / time / datetime value as default for this field. This may not be what you want. If you want to have the current date as default, use `django.utils.timezone.now`
+finance.FeePaymentSummaryModel.date: (fields.W161) Fixed default value provided.
+	HINT: It seems you set a fixed date / time / datetime value as default for this field. This may not be what you want. If you want to have the current date as default, use `django.utils.timezone.now`
+finance.IncomeModel.date: (fields.W161) Fixed default value provided.
+	HINT: It seems you set a fixed date / time / datetime value as default for this field. This may not be what you want. If you want to have the current date as default, use `django.utils.timezone.now`
+inventory.InventoryStockModel.date: (fields.W161) Fixed default value provided.
+	HINT: It seems you set a fixed date / time / datetime value as default for this field. This may not be what you want. If you want to have the current date as default, use `django.utils.timezone.now`
+inventory.InventoryStockOutModel.date: (fields.W161) Fixed default value provided.
+	HINT: It seems you set a fixed date / time / datetime value as default for this field. This may not be what you want. If you want to have the current date as default, use `django.utils.timezone.now`
+inventory.InventoryStockOutSummaryModel.date: (fields.W161) Fixed default value provided.
+	HINT: It seems you set a fixed date / time / datetime value as default for this field. This may not be what you want. If you want to have the current date as default, use `django.utils.timezone.now`
+
+System check identified 7 issues (0 silenced).
+August 20, 2023 - 17:20:47
+Django version 4.2.1, using settings 'school_software.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+[20/Aug/2023 17:20:50] "GET /myadmin/site/sign-in HTTP/1.0" 200 6518
+[20/Aug/2023 17:20:50] "GET /media/images/logo/WhatsApp_Image_2023-07-25_at_9.19.40_AM_9sMMLvP.jpeg HTTP/1.0" 304 0
+[20/Aug/2023 17:20:59] "GET /myadmin/ HTTP/1.0" 302 0
+[20/Aug/2023 17:20:59] "GET /myadmin/site/sign-in?next=/myadmin/ HTTP/1.0" 200 6518
+Internal Server Error: /
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.10/dist-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.10/dist-packages/django/core/handlers/base.py", line 220, in _get_response
+    response = response.render()
+  File "/usr/local/lib/python3.10/dist-packages/django/template/response.py", line 114, in render
+    self.content = self.rendered_content
+  File "/usr/local/lib/python3.10/dist-packages/django/template/response.py", line 90, in rendered_content
+    template = self.resolve_template(self.template_name)
+  File "/usr/local/lib/python3.10/dist-packages/django/template/response.py", line 72, in resolve_template
+    return select_template(template, using=self.using)
+  File "/usr/local/lib/python3.10/dist-packages/django/template/loader.py", line 47, in select_template
+    raise TemplateDoesNotExist(", ".join(template_name_list), chain=chain)
+django.template.exceptions.TemplateDoesNotExist: front_cms/template1/homepage.html
+[20/Aug/2023 17:27:27] "GET / HTTP/1.0" 500 79392
+Internal Server Error: /
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.10/dist-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.10/dist-packages/django/core/handlers/base.py", line 220, in _get_response
+    response = response.render()
+  File "/usr/local/lib/python3.10/dist-packages/django/template/response.py", line 114, in render
+    self.content = self.rendered_content
+  File "/usr/local/lib/python3.10/dist-packages/django/template/response.py", line 90, in rendered_content
+    template = self.resolve_template(self.template_name)
+  File "/usr/local/lib/python3.10/dist-packages/django/template/response.py", line 72, in resolve_template
+    return select_template(template, using=self.using)
+  File "/usr/local/lib/python3.10/dist-packages/django/template/loader.py", line 47, in select_template
+    raise TemplateDoesNotExist(", ".join(template_name_list), chain=chain)
+django.template.exceptions.TemplateDoesNotExist: front_cms/template1/homepage.html
+[20/Aug/2023 17:27:27] "GET / HTTP/1.0" 500 79118
+Internal Server Error: /
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.10/dist-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.10/dist-packages/django/core/handlers/base.py", line 220, in _get_response
+    response = response.render()
+  File "/usr/local/lib/python3.10/dist-packages/django/template/response.py", line 114, in render
+    self.content = self.rendered_content
+  File "/usr/local/lib/python3.10/dist-packages/django/template/response.py", line 90, in rendered_content
+    template = self.resolve_template(self.template_name)
+  File "/usr/local/lib/python3.10/dist-packages/django/template/response.py", line 72, in resolve_template
+    return select_template(template, using=self.using)
+  File "/usr/local/lib/python3.10/dist-packages/django/template/loader.py", line 47, in select_template
+    raise TemplateDoesNotExist(", ".join(template_name_list), chain=chain)
+django.template.exceptions.TemplateDoesNotExist: front_cms/template1/homepage.html
+[20/Aug/2023 17:27:39] "GET / HTTP/1.0" 500 79255
+Internal Server Error: /
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.10/dist-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.10/dist-packages/django/core/handlers/base.py", line 220, in _get_response
+    response = response.render()
+  File "/usr/local/lib/python3.10/dist-packages/django/template/response.py", line 114, in render
+    self.content = self.rendered_content
+  File "/usr/local/lib/python3.10/dist-packages/django/template/response.py", line 90, in rendered_content
+    template = self.resolve_template(self.template_name)
+  File "/usr/local/lib/python3.10/dist-packages/django/template/response.py", line 72, in resolve_template
+    return select_template(template, using=self.using)
+  File "/usr/local/lib/python3.10/dist-packages/django/template/loader.py", line 47, in select_template
+    raise TemplateDoesNotExist(", ".join(template_name_list), chain=chain)
+django.template.exceptions.TemplateDoesNotExist: front_cms/template1/homepage.html
+[20/Aug/2023 17:30:16] "GET / HTTP/1.0" 500 79254
+Internal Server Error: /
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.10/dist-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.10/dist-packages/django/core/handlers/base.py", line 220, in _get_response
+    response = response.render()
+  File "/usr/local/lib/python3.10/dist-packages/django/template/response.py", line 114, in render
+    self.content = self.rendered_content
+  File "/usr/local/lib/python3.10/dist-packages/django/template/response.py", line 90, in rendered_content
+    template = self.resolve_template(self.template_name)
+  File "/usr/local/lib/python3.10/dist-packages/django/template/response.py", line 72, in resolve_template
+    return select_template(template, using=self.using)
+  File "/usr/local/lib/python3.10/dist-packages/django/template/loader.py", line 47, in select_template
+    raise TemplateDoesNotExist(", ".join(template_name_list), chain=chain)
+django.template.exceptions.TemplateDoesNotExist: front_cms/template1/homepage.html
+[20/Aug/2023 17:30:19] "GET / HTTP/1.0" 500 79254
+Internal Server Error: /
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.10/dist-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.10/dist-packages/django/core/handlers/base.py", line 220, in _get_response
+    response = response.render()
+  File "/usr/local/lib/python3.10/dist-packages/django/template/response.py", line 114, in render
+    self.content = self.rendered_content
+  File "/usr/local/lib/python3.10/dist-packages/django/template/response.py", line 90, in rendered_content
+    template = self.resolve_template(self.template_name)
+  File "/usr/local/lib/python3.10/dist-packages/django/template/response.py", line 72, in resolve_template
+    return select_template(template, using=self.using)
+  File "/usr/local/lib/python3.10/dist-packages/django/template/loader.py", line 47, in select_template
+    raise TemplateDoesNotExist(", ".join(template_name_list), chain=chain)
+django.template.exceptions.TemplateDoesNotExist: front_cms/template1/homepage.html
+[20/Aug/2023 17:33:22] "GET / HTTP/1.0" 500 79255
+Internal Server Error: /
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.10/dist-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.10/dist-packages/django/core/handlers/base.py", line 220, in _get_response
+    response = response.render()
+  File "/usr/local/lib/python3.10/dist-packages/django/template/response.py", line 114, in render
+    self.content = self.rendered_content
+  File "/usr/local/lib/python3.10/dist-packages/django/template/response.py", line 90, in rendered_content
+    template = self.resolve_template(self.template_name)
+  File "/usr/local/lib/python3.10/dist-packages/django/template/response.py", line 72, in resolve_template
+    return select_template(template, using=self.using)
+  File "/usr/local/lib/python3.10/dist-packages/django/template/loader.py", line 47, in select_template
+    raise TemplateDoesNotExist(", ".join(template_name_list), chain=chain)
+django.template.exceptions.TemplateDoesNotExist: front_cms/template1/homepage.html
+[20/Aug/2023 17:33:59] "GET / HTTP/1.0" 500 79255
+Internal Server Error: /
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.10/dist-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.10/dist-packages/django/core/handlers/base.py", line 220, in _get_response
+    response = response.render()
+  File "/usr/local/lib/python3.10/dist-packages/django/template/response.py", line 114, in render
+    self.content = self.rendered_content
+  File "/usr/local/lib/python3.10/dist-packages/django/template/response.py", line 90, in rendered_content
+    template = self.resolve_template(self.template_name)
+  File "/usr/local/lib/python3.10/dist-packages/django/template/response.py", line 72, in resolve_template
+    return select_template(template, using=self.using)
+  File "/usr/local/lib/python3.10/dist-packages/django/template/loader.py", line 47, in select_template
+    raise TemplateDoesNotExist(", ".join(template_name_list), chain=chain)
+django.template.exceptions.TemplateDoesNotExist: front_cms/template1/homepage.html
+[20/Aug/2023 17:34:04] "GET / HTTP/1.0" 500 79255
+Internal Server Error: /
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.10/dist-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.10/dist-packages/django/core/handlers/base.py", line 220, in _get_response
+    response = response.render()
+  File "/usr/local/lib/python3.10/dist-packages/django/template/response.py", line 114, in render
+    self.content = self.rendered_content
+  File "/usr/local/lib/python3.10/dist-packages/django/template/response.py", line 90, in rendered_content
+    template = self.resolve_template(self.template_name)
+  File "/usr/local/lib/python3.10/dist-packages/django/template/response.py", line 72, in resolve_template
+    return select_template(template, using=self.using)
+  File "/usr/local/lib/python3.10/dist-packages/django/template/loader.py", line 47, in select_template
+    raise TemplateDoesNotExist(", ".join(template_name_list), chain=chain)
+django.template.exceptions.TemplateDoesNotExist: front_cms/template1/homepage.html
+[20/Aug/2023 17:40:36] "GET / HTTP/1.0" 500 79255
+Internal Server Error: /
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.10/dist-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.10/dist-packages/django/core/handlers/base.py", line 220, in _get_response
+    response = response.render()
+  File "/usr/local/lib/python3.10/dist-packages/django/template/response.py", line 114, in render
+    self.content = self.rendered_content
+  File "/usr/local/lib/python3.10/dist-packages/django/template/response.py", line 90, in rendered_content
+    template = self.resolve_template(self.template_name)
+  File "/usr/local/lib/python3.10/dist-packages/django/template/response.py", line 72, in resolve_template
+    return select_template(template, using=self.using)
+  File "/usr/local/lib/python3.10/dist-packages/django/template/loader.py", line 47, in select_template
+    raise TemplateDoesNotExist(", ".join(template_name_list), chain=chain)
+django.template.exceptions.TemplateDoesNotExist: front_cms/template1/homepage.html
+[20/Aug/2023 17:40:39] "GET / HTTP/1.0" 500 79255
+Watching for file changes with StatReloader
+Performing system checks...
+
+System check identified some issues:
+
+WARNINGS:
+finance.ExpenseModel.date: (fields.W161) Fixed default value provided.
+	HINT: It seems you set a fixed date / time / datetime value as default for this field. This may not be what you want. If you want to have the current date as default, use `django.utils.timezone.now`
+finance.FeePaymentModel.date: (fields.W161) Fixed default value provided.
+	HINT: It seems you set a fixed date / time / datetime value as default for this field. This may not be what you want. If you want to have the current date as default, use `django.utils.timezone.now`
+finance.FeePaymentSummaryModel.date: (fields.W161) Fixed default value provided.
+	HINT: It seems you set a fixed date / time / datetime value as default for this field. This may not be what you want. If you want to have the current date as default, use `django.utils.timezone.now`
+finance.IncomeModel.date: (fields.W161) Fixed default value provided.
+	HINT: It seems you set a fixed date / time / datetime value as default for this field. This may not be what you want. If you want to have the current date as default, use `django.utils.timezone.now`
+inventory.InventoryStockModel.date: (fields.W161) Fixed default value provided.
+	HINT: It seems you set a fixed date / time / datetime value as default for this field. This may not be what you want. If you want to have the current date as default, use `django.utils.timezone.now`
+inventory.InventoryStockOutModel.date: (fields.W161) Fixed default value provided.
+	HINT: It seems you set a fixed date / time / datetime value as default for this field. This may not be what you want. If you want to have the current date as default, use `django.utils.timezone.now`
+inventory.InventoryStockOutSummaryModel.date: (fields.W161) Fixed default value provided.
+	HINT: It seems you set a fixed date / time / datetime value as default for this field. This may not be what you want. If you want to have the current date as default, use `django.utils.timezone.now`
+
+System check identified 7 issues (0 silenced).
+August 20, 2023 - 18:01:59
+Django version 4.2.1, using settings 'school_software.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+[20/Aug/2023 18:02:08] "GET / HTTP/1.0" 200 41776
+[20/Aug/2023 18:02:09] "GET /static/admin_dashboard/vendor/quill/quill.snow.css HTTP/1.0" 304 0
+[20/Aug/2023 18:02:09] "GET /static/admin_dashboard/vendor/quill/quill.bubble.css HTTP/1.0" 304 0
+[20/Aug/2023 18:02:09] "GET /static/admin_dashboard/vendor/boxicons/css/boxicons.min.css HTTP/1.0" 304 0
+[20/Aug/2023 18:02:09] "GET /static/admin_dashboard/vendor/remixicon/remixicon.css HTTP/1.0" 304 0
+[20/Aug/2023 18:02:09] "GET /static/admin_dashboard/vendor/simple-datatables/style.css HTTP/1.0" 304 0
+[20/Aug/2023 18:02:10] "GET /static/admin_dashboard/vendor/remixicon/remixicon.woff2?t=1590207869815 HTTP/1.0" 304 0
+[20/Aug/2023 18:02:10] "GET /media/images/logo/WhatsApp_Image_2023-07-25_at_9.19.40_AM_9sMMLvP.jpeg HTTP/1.0" 304 0
+[20/Aug/2023 18:03:32] "GET / HTTP/1.0" 200 41776
+[20/Aug/2023 18:03:43] "GET / HTTP/1.0" 200 41776

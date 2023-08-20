@@ -17,7 +17,7 @@ def generate_barcode(identifier):
 
 
 class DepartmentModel(models.Model):
-    """"""
+    """  """
     name = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=True)
     DEPT_TYPE = (
@@ -254,7 +254,7 @@ class StaffIDGeneratorModel(models.Model):
 
 
 class HRSettingModel(models.Model):
-    auto_generate_staff_id = models.BooleanField(default=True, blank=True, null=True)
+    auto_generate_staff_id = models.BooleanField(default=True)
     TYPE = (
         ('pri', 'PRIMARY'), ('sec', 'SECONDARY')
     )

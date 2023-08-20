@@ -14,6 +14,7 @@ from django.contrib.auth.models import User
 from student.models import StudentsModel, ParentsModel
 from human_resource.models import StaffModel
 from attendance.models import *
+from attendance.templatetags.attendance_custom_filters import *
 
 
 class DailyAttendanceView(TemplateView):
@@ -181,6 +182,86 @@ def daily_attendance_api(request):
         result += """<p class='text-danger'><b> {} </b></p>""".format(message)
         result += """<p class='text-danger'><b> {} {} </b></p>""".format(today, time)
     return HttpResponse(result)
+
+
+def check_general_attendance_select_date(request):
+    if request.method == 'POST':
+        selected_date = request.POST.get('date')
+        return redirect(reverse('check_general_attendance', kwargs={'date': selected_date}))
+
+    return render(request, 'attendance/check_general_attendance_select_date.html')
+
+
+def check_general_attendance(request, date):
+    selected_date = datetime.strptime(date, "%Y-%m-%d")
+    if selected_date > datetime.now():
+        messages.error(request, 'Cannot Check attendance For a Future Date')
+        return redirect(reverse('check_class_attendance_select_class'))
+    school_setting = SchoolGeneralInfoModel.objects.first()
+    user_type = request.user.profile.type
+    if school_setting.separate_school_section:
+        setting = AcademicSettingModel.objects.filter(type=user_type).first()
+        academic_setting = SchoolAcademicInfoModel.objects.filter(type=user_type).first()
+    else:
+        setting = AcademicSettingModel.objects.first()
+        academic_setting = SchoolAcademicInfoModel.objects.first()
+    selected_day = selected_date.strftime("%A")
+    day_is_valid = False
+    all_days = setting.active_days.all()
+    for day in all_days:
+        if day.name.lower() == selected_day.lower():
+            day_is_valid = True
+            break
+    if not day_is_valid:
+        messages.error(request, 'Cannot Check attendance on {} as school is not active'.format(selected_day.title()))
+        return redirect(reverse('check_class_attendance_select_class'))
+
+    if school_setting.separate_school_section:
+        attendance_list = StudentAttendanceModel.objects.filter(type=user_type)
+        staff_attendance_list = StaffAttendanceModel.objects.filter(type=user_type)
+        students = StudentsModel.objects.filter(type=user_type).count()
+        staff = StaffModel.objects.filter(type=user_type).count()
+    else:
+        attendance_list = StudentAttendanceModel.objects.all()
+        staff_attendance_list = StaffAttendanceModel.objects.all()
+        students = StudentsModel.objects.all().count()
+        staff = StaffModel.objects.count()
+    total_attendance, total_staff_attendance = 0, 0
+    selected_date_str = selected_date.strftime("%d-%m-%y")
+
+    session, term = None, None
+    for key, attendance in enumerate(attendance_list):
+        if key == 1:
+            session = attendance.sesskion
+            term = attendance.term
+        if selected_date_str in attendance.attendance.keys():
+            total_attendance += 1
+
+    for key, attendance in enumerate(staff_attendance_list):
+        if key == 1 and not session:
+            session = attendance.sesskion
+            term = attendance.term
+
+        if selected_date_str in attendance.attendance.keys():
+            total_staff_attendance += 1
+    session = session if session else academic_setting.session
+    term = term if term else academic_setting.term
+
+    context = {
+        'selected_date': selected_date,
+        'total_student': students,
+        'total_attendance': total_attendance,
+        'absent_student': students - total_attendance,
+        'percentage_student': round((total_attendance/students) * 100) if students else 0,
+
+        'total_staff': staff,
+        'total_staff_attendance': total_staff_attendance,
+        'absent_staff': staff - total_staff_attendance,
+        'percentage_staff': round((total_staff_attendance / staff) * 100) if staff else 0,
+        'session': session,
+        'term': term
+    }
+    return render(request, 'attendance/check_general_attendance.html', context)
 
 
 def daily_attendance_select_class(request):
@@ -416,9 +497,24 @@ def check_class_attendance(request, pk, date):
         return redirect(reverse('check_class_attendance_select_class'))
     student_list = StudentsModel.objects.filter(student_class=class_info.student_class,
                                                 class_section=class_info.section).order_by('surname')
+    total_attendance, present_attendance, late_attendance, absent_attendance = 0, 0, 0, 0
+    for student in student_list:
+        student_attendance = check_student_attendance(student, selected_date)
+        if student_attendance:
+            total_attendance += 1
+            if student_attendance == 'present':
+                present_attendance += 1
+            elif student_attendance == 'late':
+                late_attendance += 1
+            elif student_attendance == 'absent':
+                absent_attendance += 1
     context = {
         'student_list': student_list,
         'class_info': class_info,
-        'date': selected_date
+        'date': selected_date,
+        'total_attendance': total_attendance,
+        'present_attendance': present_attendance,
+        'late_attendance': late_attendance,
+        'absent_attendance': absent_attendance
     }
     return render(request, 'attendance/check_class_attendance.html', context)
